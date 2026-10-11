@@ -5,11 +5,13 @@ Usage (from the project root):
   python -m src.cli ingest --mode incremental
   python -m src.cli ingest --mode full
   python -m src.cli --run-id my_run_1 ingest --mode incremental --stop-after 2
+  python -m src.cli transform-staging
+  python -m src.cli build-curated
 """
 import argparse
 import sys
 
-from src import ingest
+from src import ingest, transform
 from src.common import RunLogger, new_run_id
 
 
@@ -27,6 +29,8 @@ def build_parser():
                           help="rebuild all incremental batches from scratch")
     p_ingest.add_argument("--stop-after", type=int, default=None,
                           help="simulate a crash after N new batches (recovery demo)")
+    sub.add_parser("transform-staging", help="raw -> staging (clean, type, quarantine)")
+    sub.add_parser("build-curated", help="staging -> curated (weekly join + features)")
     return parser
 
 
@@ -44,6 +48,10 @@ def main(argv=None):
             else:
                 ingest.ingest_incremental(run_id, logger, force=args.force,
                                           stop_after=args.stop_after)
+        elif args.command == "transform-staging":
+            transform.run_staging(run_id, logger)
+        elif args.command == "build-curated":
+            transform.run_curated(run_id, logger)
     except Exception as exc:
         logger.error("step failed", error_type=type(exc).__name__, error=str(exc))
         return 1

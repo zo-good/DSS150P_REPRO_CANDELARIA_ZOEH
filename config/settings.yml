@@ -33,3 +33,38 @@ model:
   n_jobs: -1
   primary_metric: severity_macro_f1
   tolerance: 0.01
+
+transform:
+  # 4 cities appear twice per day in the 2020-2023 weather file (see source profile).
+  #   keep_all : reproduce the group exactly (both copies enter the weekly sums/means)
+  #   average  : engineering fix (average the two copies into one row per city-day)
+  weather_duplicate_policy: keep_all
+  # DOH stores " CAGAYAN DE ORO CITY" with a leading space, so the group never matched it.
+  #   false : reproduce the group (Cagayan de Oro silently drops out -> 41 cities)
+  #   true  : engineering fix (trim names -> 42 cities)
+  strip_location_whitespace: false
+  # the group's weekly weather file stored temperature/wind means rounded to 2 decimals
+  round_weekly_means: 2
+  weekly_sum_columns:
+    - precipitation_sum
+    - rain_sum
+    - precipitation_hours
+    - sunshine_duration
+    - daylight_duration
+    - shortwave_radiation_sum
+    - et0_fao_evapotranspiration
+  weekly_mean_columns:
+    - temperature_2m_max
+    - temperature_2m_min
+    - temperature_2m_mean
+    - apparent_temperature_max
+    - apparent_temperature_min
+    - apparent_temperature_mean
+    - wind_speed_10m_max
+    - wind_gusts_10m_max
+    - wind_direction_10m_dominant
+  lag_drivers: [rain_sum, precipitation_sum, temperature_2m_mean, temperature_2m_max, apparent_temperature_mean]
+  lags: [1, 2, 3, 4]
+  rolling_drivers: [rain_sum, temperature_2m_mean]
+  rolling_window: 4
+  case_lags: [1, 2, 3]
