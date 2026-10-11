@@ -1,0 +1,14 @@
+{
+  "pipeline_run_id": "run_20261011T162704Z_6cc20f",
+  "computed_at_utc": "2026-10-11T16:27:04+00:00",
+  "test_rows": 2060,
+  "severity_accuracy": 0.7184,
+  "severity_macro_f1": 0.4972,
+  "severity_f1_low": 0.86,
+  "severity_f1_moderate": 0.3711,
+  "severity_f1_high": 0.2606,
+  "nextweek_rf_mae": 5.8981,
+  "nextweek_rf_rmse": 19.2486,
+  "nextweek_naive_mae": 3.8307,
+  "nextweek_naive_rmse": 7.7276
+}

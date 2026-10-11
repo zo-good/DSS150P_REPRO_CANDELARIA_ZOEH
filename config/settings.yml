@@ -68,3 +68,55 @@ transform:
   rolling_drivers: [rain_sum, temperature_2m_mean]
   rolling_window: 4
   case_lags: [1, 2, 3]
+
+features:
+  target_classification: severity          # Low / Moderate / High
+  target_regression: cases_next            # next week's cases (secondary model)
+  # the group's exact 45 features, in the group's column order (order affects the random forest)
+  numeric:
+    - precipitation_sum
+    - rain_sum
+    - precipitation_hours
+    - sunshine_duration
+    - daylight_duration
+    - shortwave_radiation_sum
+    - et0_fao_evapotranspiration
+    - temperature_2m_max
+    - temperature_2m_min
+    - temperature_2m_mean
+    - apparent_temperature_max
+    - apparent_temperature_min
+    - apparent_temperature_mean
+    - wind_speed_10m_max
+    - wind_gusts_10m_max
+    - wind_direction_10m_dominant
+    - week_of_year
+    - month
+    - woy_sin
+    - woy_cos
+    - rain_sum_lag1
+    - rain_sum_lag2
+    - rain_sum_lag3
+    - rain_sum_lag4
+    - precipitation_sum_lag1
+    - precipitation_sum_lag2
+    - precipitation_sum_lag3
+    - precipitation_sum_lag4
+    - temperature_2m_mean_lag1
+    - temperature_2m_mean_lag2
+    - temperature_2m_mean_lag3
+    - temperature_2m_mean_lag4
+    - temperature_2m_max_lag1
+    - temperature_2m_max_lag2
+    - temperature_2m_max_lag3
+    - temperature_2m_max_lag4
+    - apparent_temperature_mean_lag1
+    - apparent_temperature_mean_lag2
+    - apparent_temperature_mean_lag3
+    - apparent_temperature_mean_lag4
+    - rain_sum_roll4
+    - temperature_2m_mean_roll4
+    - cases_lag1
+    - cases_lag2
+    - cases_lag3
+  one_hot: [loc]                           # city indicator columns, as in the group's design()

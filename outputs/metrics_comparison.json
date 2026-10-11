@@ -1,0 +1,84 @@
+{
+  "pipeline_run_id": "run_20261011T162706Z_acdb36",
+  "checked_at_utc": "2026-10-11T16:27:06+00:00",
+  "primary_metric": "severity_macro_f1",
+  "expected": 0.494,
+  "actual": 0.4972,
+  "difference": 0.0032,
+  "tolerance": 0.01,
+  "passed": true,
+  "data_checks_expected_vs_actual": {
+    "split_date": [
+      "2020-01-12",
+      "2020-01-12"
+    ],
+    "train_rows": [
+      8373,
+      8373
+    ],
+    "test_rows": [
+      2060,
+      2060
+    ],
+    "rows_model_ready": [
+      10433,
+      10433
+    ]
+  },
+  "all_metrics": [
+    {
+      "metric": "severity_accuracy",
+      "expected": 0.717,
+      "actual": 0.7184,
+      "difference": 0.0014
+    },
+    {
+      "metric": "severity_macro_f1",
+      "expected": 0.494,
+      "actual": 0.4972,
+      "difference": 0.0032
+    },
+    {
+      "metric": "severity_f1_low",
+      "expected": 0.86,
+      "actual": 0.86,
+      "difference": 0.0
+    },
+    {
+      "metric": "severity_f1_moderate",
+      "expected": 0.37,
+      "actual": 0.3711,
+      "difference": 0.0011
+    },
+    {
+      "metric": "severity_f1_high",
+      "expected": 0.26,
+      "actual": 0.2606,
+      "difference": 0.0006
+    },
+    {
+      "metric": "nextweek_rf_mae",
+      "expected": 5.87,
+      "actual": 5.8981,
+      "difference": 0.0281
+    },
+    {
+      "metric": "nextweek_rf_rmse",
+      "expected": 18.82,
+      "actual": 19.2486,
+      "difference": 0.4286
+    },
+    {
+      "metric": "nextweek_naive_mae",
+      "expected": 3.83,
+      "actual": 3.8307,
+      "difference": 0.0007
+    },
+    {
+      "metric": "nextweek_naive_rmse",
+      "expected": 7.73,
+      "actual": 7.7276,
+      "difference": -0.0024
+    }
+  ]
+}

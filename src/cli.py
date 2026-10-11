@@ -7,11 +7,14 @@ Usage (from the project root):
   python -m src.cli --run-id my_run_1 ingest --mode incremental --stop-after 2
   python -m src.cli transform-staging
   python -m src.cli build-curated
+  python -m src.cli train
+  python -m src.cli evaluate
+  python -m src.cli reproducibility-check
 """
 import argparse
 import sys
 
-from src import ingest, transform
+from src import evaluate, ingest, train, transform
 from src.common import RunLogger, new_run_id
 
 
@@ -31,6 +34,9 @@ def build_parser():
                           help="simulate a crash after N new batches (recovery demo)")
     sub.add_parser("transform-staging", help="raw -> staging (clean, type, quarantine)")
     sub.add_parser("build-curated", help="staging -> curated (weekly join + features)")
+    sub.add_parser("train", help="curated -> split, labels, random forests, predictions")
+    sub.add_parser("evaluate", help="predictions -> outputs/metrics.json")
+    sub.add_parser("reproducibility-check", help="compare metrics with expected baseline")
     return parser
 
 
@@ -52,6 +58,12 @@ def main(argv=None):
             transform.run_staging(run_id, logger)
         elif args.command == "build-curated":
             transform.run_curated(run_id, logger)
+        elif args.command == "train":
+            train.run_training(run_id, logger)
+        elif args.command == "evaluate":
+            evaluate.evaluate_model(run_id, logger)
+        elif args.command == "reproducibility-check":
+            evaluate.reproducibility_check(run_id, logger)
     except Exception as exc:
         logger.error("step failed", error_type=type(exc).__name__, error=str(exc))
         return 1

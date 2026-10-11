@@ -52,5 +52,9 @@ files:
 
 acquisition:
   placement: data/source/  # put files here with these exact names
-  download_link: TODO      # Google Drive / GitHub Release link for the 2 weather files, added later
-  verify_command: "Get-FileHash data/source/*.csv -Algorithm SHA256"
+  download_link: "https://drive.google.com/drive/folders/18Tmi2SxdWr6jmoDS41KWBW-rr8IxRD-G?usp=sharing"
+  instructions: >
+    The dengue CSV is committed in this repo. Download the two daily_data_combined_*.csv
+    weather files from the Google Drive folder above (also mirrors the dengue CSV), place
+    them in data/source/ without renaming or opening them in Excel, then verify the bytes.
+  verify_command: "python -m src.cli verify-source"
