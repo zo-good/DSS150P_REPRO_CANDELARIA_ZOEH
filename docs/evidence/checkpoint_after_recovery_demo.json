@@ -1,0 +1,59 @@
+{
+  "watermark_date": "2021-01-10",
+  "committed_batches": [
+    {
+      "batch_id": "dengue_2016",
+      "file": "dengue_2016.csv",
+      "rows": 6329,
+      "max_event_date": "2016-12-25",
+      "file_sha256": "51dbb0f7e3c411114bd1e9111aae4447d97a09058a6ffa5e424d4648f2f4a109",
+      "pipeline_run_id": "run_20261011T155650Z_dc395e",
+      "committed_at_utc": "2026-10-11T15:56:53+00:00"
+    },
+    {
+      "batch_id": "dengue_2017",
+      "file": "dengue_2017.csv",
+      "rows": 6636,
+      "max_event_date": "2017-12-31",
+      "file_sha256": "dd67b06af652a17bb59d1bbb8c989b79252f8e5ea915e2f27c404106c2b4ad31",
+      "pipeline_run_id": "run_20261011T155650Z_dc395e",
+      "committed_at_utc": "2026-10-11T15:56:53+00:00"
+    },
+    {
+      "batch_id": "dengue_2018",
+      "file": "dengue_2018.csv",
+      "rows": 6552,
+      "max_event_date": "2018-12-30",
+      "file_sha256": "993aa866a5ee218f9dc3d51ab094a95c0b7291ca0f3e2be941d3cc85c30bdee4",
+      "pipeline_run_id": "run_20261011T155700Z_0ab9e5",
+      "committed_at_utc": "2026-10-11T15:57:03+00:00"
+    },
+    {
+      "batch_id": "dengue_2019",
+      "file": "dengue_2019.csv",
+      "rows": 6426,
+      "max_event_date": "2019-12-29",
+      "file_sha256": "10879bedb4458a7cca42f628af67f4a8335a4184cbbba1e31dbeab731ed844a9",
+      "pipeline_run_id": "run_20261011T155700Z_0ab9e5",
+      "committed_at_utc": "2026-10-11T15:57:03+00:00"
+    },
+    {
+      "batch_id": "dengue_2020",
+      "file": "dengue_2020.csv",
+      "rows": 6506,
+      "max_event_date": "2020-12-27",
+      "file_sha256": "f8c245ff69836b0e3118d624ec1f859f9b8dea10c86347cfff784552bcc6cb64",
+      "pipeline_run_id": "run_20261011T155700Z_0ab9e5",
+      "committed_at_utc": "2026-10-11T15:57:04+00:00"
+    },
+    {
+      "batch_id": "dengue_2021",
+      "file": "dengue_2021.csv",
+      "rows": 252,
+      "max_event_date": "2021-01-10",
+      "file_sha256": "10e5132c6eca39b06efd5261f5f8ed1fbae285a8f61a8ca60e56d323f305ee81",
+      "pipeline_run_id": "run_20261011T155700Z_0ab9e5",
+      "committed_at_utc": "2026-10-11T15:57:04+00:00"
+    }
+  ]
+}
