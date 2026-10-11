@@ -1,0 +1,31 @@
+# secrets (passwords) - never upload
+.env
+
+# Python environment and cache files
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# computer junk files
+.DS_Store
+Thumbs.db
+
+# data the pipeline creates - anyone can rebuild it by running the pipeline
+data/raw/*
+data/staging/*
+data/curated/*
+data/partitioned/*
+data/quarantine/*
+!data/**/.gitkeep
+
+# the two weather files are too big for GitHub (88 MB + 32 MB)
+data/source/daily_data_combined_*.csv
+
+# progress tracking, logs, saved model
+state/*
+!state/.gitkeep
+logs/*
+!logs/.gitkeep
+outputs/model/*
+!outputs/model/.gitkeep

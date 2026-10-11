@@ -1,0 +1,35 @@
+project:
+  name: dengue_ph_repro
+  seed: 42
+
+paths:
+  source_dir: data/source
+  raw_dir: data/raw
+  staging_dir: data/staging
+  curated_dir: data/curated
+  partitioned_dir: data/partitioned
+  quarantine_dir: data/quarantine
+  metadata_dir: metadata
+  outputs_dir: outputs
+  state_dir: state
+  logs_dir: logs
+
+source:
+  dengue_file: doh-epi-dengue-data-2016-2021.csv
+  weather_files:
+    - daily_data_combined_2010_to_2019.csv
+    - daily_data_combined_2020_to_2023.csv
+  dengue_date_format: "%m/%d/%Y"
+
+ingestion:
+  batch_by: year
+  checkpoint_file: state/checkpoint.json
+
+model:
+  train_fraction: 0.8
+  severity_quantiles: [0.33, 0.66]
+  n_estimators: 300
+  random_state: 42
+  n_jobs: -1
+  primary_metric: severity_macro_f1
+  tolerance: 0.01
