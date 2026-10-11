@@ -1,0 +1,56 @@
+manifest_version: 1
+created_by: Zoeh Candelaria
+description: >
+  Immutable source snapshot for the DSS150P Lab 4 reproduction of the group
+  dengue severity project. Files in data/source/ must never be edited.
+
+files:
+  - name: doh-epi-dengue-data-2016-2021.csv
+    role: primary          # dengue cases = the prediction target
+    sha256: e1968c4009ad437e495b890e66a92e3efdb7c913ea49b4764bfdd3dcbabf035f
+    size_bytes: 1565245
+    rows: 32702            # includes 1 HXL tag row (#adm2+name...) under the header
+    columns: 5
+    format: csv
+    encoding: utf-8
+    delimiter: ","
+    line_endings: LF
+    origin: "HDX - Philippine Dengue Cases and Deaths, published by Cirrolytix"
+    origin_page: "https://data.humdata.org/dataset/philippine-dengue-cases-and-deaths"
+    download_url: "https://data.humdata.org/dataset/ac63a95e-7296-42fb-802b-7f7541c73e45/resource/9e839677-3ff0-44b3-992c-1a99e68df515/download/doh-epi-dengue-data-2016-2021.csv"
+    source_last_modified: "2022-05-02"
+    license: "CC BY 4.0 (HDX site-wide default; no dataset-specific license shown)"
+    in_git: true
+
+  - name: daily_data_combined_2010_to_2019.csv
+    role: weather          # daily weather per city (features)
+    sha256: 26665bd48292b9d29800866b862a8c6879137a327509bf10bfd879f02203c175
+    size_bytes: 88511837
+    rows: 500324
+    columns: 24
+    format: csv
+    encoding: utf-8
+    delimiter: ","
+    line_endings: LF
+    origin: "Open-Meteo historical weather (column naming matches Open-Meteo); exact download page not recorded by the original group"
+    license: "Open-Meteo data is CC BY 4.0 (to confirm)"
+    in_git: false          # too large for GitHub; see acquisition below
+
+  - name: daily_data_combined_2020_to_2023.csv
+    role: weather
+    sha256: 73401480f88b295eddbce46a03efb67998be10e2e49db85a507cff6eddef22cc
+    size_bytes: 32614083
+    rows: 206001
+    columns: 22            # 2 fewer than the 2010-2019 file (no latitude/longitude)
+    format: csv
+    encoding: utf-8
+    delimiter: ","
+    line_endings: LF
+    origin: "Open-Meteo historical weather (column naming matches Open-Meteo); exact download page not recorded by the original group"
+    license: "Open-Meteo data is CC BY 4.0 (to confirm)"
+    in_git: false
+
+acquisition:
+  placement: data/source/  # put files here with these exact names
+  download_link: TODO      # Google Drive / GitHub Release link for the 2 weather files, added later
+  verify_command: "Get-FileHash data/source/*.csv -Algorithm SHA256"
