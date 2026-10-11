@@ -1,0 +1,4 @@
+# Never convert line endings in data files - keeps source checksums identical on every OS
+*.csv -text
+*.json -text
+*.parquet binary
