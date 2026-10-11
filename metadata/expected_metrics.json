@@ -1,0 +1,37 @@
+{
+  "baseline_source": "group notebook notebooks/12_all_cities_timeseries.ipynb (saved cell outputs)",
+  "task": "classification",
+  "target": "severity (Low / Moderate / High, per-city 33rd/66th percentile of weekly cases, thresholds from train only)",
+  "model": {
+    "family": "RandomForestClassifier",
+    "n_estimators": 300,
+    "random_state": 42,
+    "features": "45 engineered features + one-hot city (loc)"
+  },
+  "data": {
+    "cities": 41,
+    "rows_after_merge": 10597,
+    "rows_model_ready": 10433,
+    "split_method": "chronological, cut at 80th-percentile date",
+    "split_date": "2020-01-12",
+    "train_rows": 8373,
+    "test_rows": 2060
+  },
+  "primary_metric": {
+    "name": "severity_macro_f1",
+    "expected": 0.494,
+    "tolerance": 0.01
+  },
+  "metrics": {
+    "severity_accuracy": 0.717,
+    "severity_macro_f1": 0.494,
+    "severity_f1_low": 0.86,
+    "severity_f1_moderate": 0.37,
+    "severity_f1_high": 0.26,
+    "nextweek_rf_mae": 5.87,
+    "nextweek_rf_rmse": 18.82,
+    "nextweek_naive_mae": 3.83,
+    "nextweek_naive_rmse": 7.73
+  },
+  "known_inconsistency": "notebook 14 summary table reports ~0.73 accuracy / ~0.52 macro-F1 for the same split; notebook 12 printed outputs are used as the baseline because they are actual code output, not a hand-typed summary"
+}
