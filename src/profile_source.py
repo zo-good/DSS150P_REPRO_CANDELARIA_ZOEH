@@ -109,7 +109,9 @@ def main():
         if dengue is None:
             dengue = df
     out.append(target_section(dengue))
-
+    notes = path_for("metadata_dir") / "profile_notes.md"
+    if notes.exists():
+        out.append(notes.read_text(encoding="utf-8"))
     target = path_for("metadata_dir") / "source_profile.md"
     target.write_text("\n".join(out), encoding="utf-8")
     print(f"wrote {target}")
