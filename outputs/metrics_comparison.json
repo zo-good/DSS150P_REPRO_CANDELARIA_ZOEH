@@ -1,6 +1,6 @@
 {
-  "pipeline_run_id": "run_20261011T162706Z_acdb36",
-  "checked_at_utc": "2026-10-11T16:27:06+00:00",
+  "pipeline_run_id": "run_20261012T115525Z_705c29",
+  "checked_at_utc": "2026-10-12T11:55:55+00:00",
   "primary_metric": "severity_macro_f1",
   "expected": 0.494,
   "actual": 0.4972,

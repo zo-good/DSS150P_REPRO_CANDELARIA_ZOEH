@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: dss150p-lab4-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"      # your laptop's 5433 -> the container's 5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data    # data survives container restarts
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  pipeline:
+    build: .
+    image: dss150p-lab4-pipeline
+    container_name: dss150p-lab4-pipeline
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres              # inside Docker the DB is reached by service name
+      POSTGRES_PORT: "5432"
+    depends_on:
+      postgres:
+        condition: service_healthy         # wait until the database accepts connections
+    volumes:
+      - ./data:/app/data
+      - ./metadata:/app/metadata
+      - ./outputs:/app/outputs
+      - ./state:/app/state
+      - ./logs:/app/logs
+    command: ["python", "-m", "src.cli", "run-all"]
+
+volumes:
+  pgdata:
