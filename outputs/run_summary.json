@@ -1,0 +1,90 @@
+{
+  "pipeline_run_id": "run_20261012T121356Z_5cc125",
+  "status": "success",
+  "started_at_utc": "2026-10-12T12:13:56+00:00",
+  "finished_at_utc": "2026-10-12T12:14:28+00:00",
+  "raw_rows": 32701,
+  "quarantined_rows": 1,
+  "staging_rows": 32701,
+  "curated_rows": 10433,
+  "train_rows": 8373,
+  "test_rows": 2060,
+  "prediction_rows": 2060,
+  "primary_metric": "severity_macro_f1",
+  "primary_metric_value": 0.4972,
+  "expected": 0.494,
+  "tolerance": 0.01,
+  "reproducibility_passed": true,
+  "metrics": {
+    "test_rows": 2060,
+    "severity_accuracy": 0.7184,
+    "severity_macro_f1": 0.4972,
+    "severity_f1_low": 0.86,
+    "severity_f1_moderate": 0.3711,
+    "severity_f1_high": 0.2606,
+    "nextweek_rf_mae": 5.8981,
+    "nextweek_rf_rmse": 19.2486,
+    "nextweek_naive_mae": 3.8307,
+    "nextweek_naive_rmse": 7.7276
+  },
+  "steps": {
+    "ingest": {
+      "started_at_utc": "2026-10-12T12:13:56+00:00",
+      "finished_at_utc": "2026-10-12T12:14:01+00:00",
+      "status": "success",
+      "duration_s": 4.32
+    },
+    "validate-raw": {
+      "started_at_utc": "2026-10-12T12:14:01+00:00",
+      "finished_at_utc": "2026-10-12T12:14:01+00:00",
+      "status": "success",
+      "duration_s": 0.19
+    },
+    "transform-staging": {
+      "started_at_utc": "2026-10-12T12:14:01+00:00",
+      "finished_at_utc": "2026-10-12T12:14:04+00:00",
+      "status": "success",
+      "duration_s": 3.41
+    },
+    "build-curated": {
+      "started_at_utc": "2026-10-12T12:14:04+00:00",
+      "finished_at_utc": "2026-10-12T12:14:05+00:00",
+      "status": "success",
+      "duration_s": 1.14
+    },
+    "load-postgres": {
+      "started_at_utc": "2026-10-12T12:14:05+00:00",
+      "finished_at_utc": "2026-10-12T12:14:12+00:00",
+      "status": "success",
+      "duration_s": 6.44
+    },
+    "validate-curated": {
+      "started_at_utc": "2026-10-12T12:14:12+00:00",
+      "finished_at_utc": "2026-10-12T12:14:12+00:00",
+      "status": "success",
+      "duration_s": 0.1
+    },
+    "train": {
+      "started_at_utc": "2026-10-12T12:14:12+00:00",
+      "finished_at_utc": "2026-10-12T12:14:28+00:00",
+      "status": "success",
+      "duration_s": 16.35
+    },
+    "evaluate": {
+      "started_at_utc": "2026-10-12T12:14:28+00:00",
+      "finished_at_utc": "2026-10-12T12:14:28+00:00",
+      "status": "success",
+      "duration_s": 0.05
+    },
+    "reproducibility-check": {
+      "started_at_utc": "2026-10-12T12:14:28+00:00",
+      "finished_at_utc": "2026-10-12T12:14:28+00:00",
+      "status": "success",
+      "duration_s": 0.02
+    },
+    "publish-outputs": {
+      "started_at_utc": "2026-10-12T12:14:28+00:00",
+      "status": "running"
+    }
+  }
+}

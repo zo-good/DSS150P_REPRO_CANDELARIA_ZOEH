@@ -1,6 +1,6 @@
 {
-  "pipeline_run_id": "run_20261012T115525Z_705c29",
-  "computed_at_utc": "2026-10-12T11:55:55+00:00",
+  "pipeline_run_id": "run_20261012T121356Z_5cc125",
+  "computed_at_utc": "2026-10-12T12:14:28+00:00",
   "test_rows": 2060,
   "severity_accuracy": 0.7184,
   "severity_macro_f1": 0.4972,

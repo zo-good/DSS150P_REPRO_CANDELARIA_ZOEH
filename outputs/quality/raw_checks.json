@@ -1,0 +1,65 @@
+{
+  "pipeline_run_id": "run_20261012T121356Z_5cc125",
+  "checked_at_utc": "2026-10-12T12:14:01+00:00",
+  "layer": "raw",
+  "passed": 8,
+  "total": 8,
+  "checks": [
+    {
+      "name": "source_checksum_matches_contract",
+      "category": "freshness/applicability",
+      "passed": true,
+      "detail": "source sha256 e1968c4009ad...",
+      "action": "fail"
+    },
+    {
+      "name": "raw_batches_exist",
+      "category": "completeness",
+      "passed": true,
+      "detail": "6 batch files",
+      "action": "fail"
+    },
+    {
+      "name": "required_columns_present",
+      "category": "schema",
+      "passed": true,
+      "detail": "missing: none",
+      "action": "fail"
+    },
+    {
+      "name": "raw_plus_quarantine_equals_source",
+      "category": "completeness",
+      "passed": true,
+      "detail": "raw 32701 + quarantined 1 vs source 32702",
+      "action": "fail"
+    },
+    {
+      "name": "source_row_key_unique",
+      "category": "uniqueness",
+      "passed": true,
+      "detail": "0 duplicate keys",
+      "action": "fail"
+    },
+    {
+      "name": "audit_columns_filled",
+      "category": "completeness",
+      "passed": true,
+      "detail": "columns: ['pipeline_run_id', 'ingested_at_utc', 'source_file', 'source_checksum']",
+      "action": "fail"
+    },
+    {
+      "name": "checkpoint_matches_raw_rows",
+      "category": "consistency",
+      "passed": true,
+      "detail": "checkpoint rows 32701 vs raw 32701",
+      "action": "fail"
+    },
+    {
+      "name": "min_rows",
+      "category": "completeness",
+      "passed": true,
+      "detail": "32701 rows (minimum 30000)",
+      "action": "fail"
+    }
+  ]
+}

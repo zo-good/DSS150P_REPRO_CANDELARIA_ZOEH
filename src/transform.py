@@ -11,6 +11,7 @@ import yaml
 
 from src.common import utc_now
 from src.config import PROJECT_ROOT, SETTINGS, path_for
+from src.validate import DataQualityError, curated_checks, enforce
 
 T = SETTINGS["transform"]
 AUDIT_COLUMNS = ["pipeline_run_id", "processed_at_utc", "source_row_key", "record_hash"]
@@ -193,17 +194,36 @@ def run_staging(run_id, logger):
     return dengue, weather
 
 
-def run_curated(run_id, logger):
-    """staging -> curated: weekly weather, join, features. Written as Parquet and CSV."""
+# Safe, reversible failures for the failure-injection demo. They only change the
+# in-memory table of THIS run; the source and staging files are never touched.
+INJECTIONS = {
+    "negative_cases": lambda d: d.assign(cases=d["cases"].where(d.index != 0, -5)),
+    "duplicate_key": lambda d: pd.concat([d, d.iloc[[0]]], ignore_index=True),
+    "missing_column": lambda d: d.drop(columns=["rain_sum_lag1"]),
+}
+
+
+def run_curated(run_id, logger, inject=None):
+    """staging -> curated: weekly weather, join, features. Checked, then written as Parquet + CSV."""
     stg_dir, cur_dir = path_for("staging_dir"), path_for("curated_dir")
     cur_dir.mkdir(parents=True, exist_ok=True)
     dengue = pd.read_parquet(stg_dir / "dengue_weekly.parquet")
     weather = pd.read_parquet(stg_dir / "weather_daily.parquet")
     curated = build_curated(dengue, weather, run_id, logger)
+    if inject:
+        curated = INJECTIONS[inject](curated)
+        logger.warning("FAILURE INJECTED ON PURPOSE (demo)", injection=inject)
 
-    dupes = int(curated.duplicated(subset=["loc", "date"]).sum())
-    if dupes:
-        raise DataContractError(f"curated has {dupes} duplicate (loc, date) rows")
+    # quality gate BEFORE writing: a bad table never replaces the last good one
+    try:
+        enforce(curated_checks(curated), "curated_build", run_id, logger)
+    except DataQualityError:
+        qdir = path_for("quarantine_dir")
+        qdir.mkdir(parents=True, exist_ok=True)
+        curated.to_csv(qdir / f"curated_rejected_{run_id}.csv", index=False)
+        logger.error("curated table rejected, previous curated files kept",
+                     rejected_copy=f"data/quarantine/curated_rejected_{run_id}.csv")
+        raise
     curated.to_parquet(cur_dir / "dengue_weather_weekly.parquet", index=False)
     curated.to_csv(cur_dir / "dengue_weather_weekly.csv", index=False)
     logger.info("curated written", table="dengue_weather_weekly", rows=len(curated),

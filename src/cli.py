@@ -1,27 +1,42 @@
 """Command-line entry point for every pipeline step.
 
 Usage (from the project root):
-  python -m src.cli verify-source
-  python -m src.cli ingest --mode incremental        (or --mode full, --force, --stop-after N)
-  python -m src.cli transform-staging
-  python -m src.cli build-curated
-  python -m src.cli load-postgres
-  python -m src.cli train
-  python -m src.cli evaluate
-  python -m src.cli reproducibility-check
-  python -m src.cli run-all                          (every step above, in order)
-  python -m src.cli --run-id my_run_1 <command>      (share one run id across steps)
+  python -m src.cli run-all                          the whole pipeline, in order
+  python -m src.cli run-all --inject-failure negative_cases     failure-injection demo
+  python -m src.cli <step>                           one step (see the list below)
+  python -m src.cli --run-id my_run_1 <step>         share one run id across steps
+
+Steps: verify-source, ingest [--mode full|incremental --force --stop-after N],
+validate-raw, transform-staging, build-curated [--inject-failure X], load-postgres,
+validate-curated, train, evaluate, reproducibility-check, publish-outputs, benchmark
 """
 import argparse
 import sys
 import time
 
-from src import benchmark, evaluate, ingest, storage, train, transform
+from src import benchmark, evaluate, ingest, publish, storage, train, transform, validate
 from src.common import RunLogger, new_run_id
 
-# the order run-all executes (Airflow uses the same steps as separate tasks)
-PIPELINE = ["ingest", "transform-staging", "build-curated", "load-postgres",
-            "train", "evaluate", "reproducibility-check"]
+# the order run-all executes; the Airflow DAG runs the same steps as separate tasks
+PIPELINE = ["ingest", "validate-raw", "transform-staging", "build-curated", "load-postgres",
+            "validate-curated", "train", "evaluate", "reproducibility-check", "publish-outputs"]
+
+STEPS = {
+    "verify-source": lambda run_id, log, a: ingest.verify_sources(log),
+    "ingest": lambda run_id, log, a: (
+        ingest.ingest_full(run_id, log) if a.mode == "full"
+        else ingest.ingest_incremental(run_id, log, force=a.force, stop_after=a.stop_after)),
+    "validate-raw": lambda run_id, log, a: validate.run_validate_raw(run_id, log),
+    "transform-staging": lambda run_id, log, a: transform.run_staging(run_id, log),
+    "build-curated": lambda run_id, log, a: transform.run_curated(run_id, log, inject=a.inject_failure),
+    "load-postgres": lambda run_id, log, a: storage.load_curated(run_id, log),
+    "validate-curated": lambda run_id, log, a: validate.run_validate_curated(run_id, log),
+    "train": lambda run_id, log, a: train.run_training(run_id, log),
+    "evaluate": lambda run_id, log, a: evaluate.evaluate_model(run_id, log),
+    "reproducibility-check": lambda run_id, log, a: evaluate.reproducibility_check(run_id, log),
+    "publish-outputs": lambda run_id, log, a: publish.run_publish(run_id, log),
+    "benchmark": lambda run_id, log, a: benchmark.run_benchmark(run_id, log),
+}
 
 
 def build_parser():
@@ -29,49 +44,16 @@ def build_parser():
     parser.add_argument("--run-id", default=None,
                         help="reuse one run id across steps (Airflow passes this)")
     sub = parser.add_subparsers(dest="command", required=True)
-
-    sub.add_parser("verify-source", help="check source files against the manifest")
-    for name in ["ingest", "run-all"]:
-        p = sub.add_parser(name, help="copy source data into raw" if name == "ingest"
-                           else "run the whole pipeline in order")
-        p.add_argument("--mode", choices=["full", "incremental"], default="incremental")
-        p.add_argument("--force", action="store_true",
-                       help="rebuild all incremental batches from scratch")
+    for name in [*STEPS, "run-all"]:
+        p = sub.add_parser(name)
+        p.add_argument("--mode", choices=["full", "incremental"], default="incremental",
+                       help="ingest: full refresh or only new batches")
+        p.add_argument("--force", action="store_true", help="ingest: rebuild all batches")
         p.add_argument("--stop-after", type=int, default=None,
-                       help="simulate a crash after N new batches (recovery demo)")
-    sub.add_parser("transform-staging", help="raw -> staging (clean, type, quarantine)")
-    sub.add_parser("build-curated", help="staging -> curated (weekly join + features)")
-    sub.add_parser("load-postgres", help="curated -> PostgreSQL (rerun-safe upsert)")
-    sub.add_parser("benchmark", help="CSV/JSONL/Parquet/PostgreSQL + partition benchmark")
-    sub.add_parser("train", help="curated -> split, labels, random forests, predictions")
-    sub.add_parser("evaluate", help="predictions -> outputs/metrics.json")
-    sub.add_parser("reproducibility-check", help="compare metrics with expected baseline")
+                       help="ingest: simulate a crash after N new batches")
+        p.add_argument("--inject-failure", choices=sorted(transform.INJECTIONS), default=None,
+                       help="build-curated: corrupt this run's curated table on purpose (demo)")
     return parser
-
-
-def run_step(step, run_id, logger, args):
-    """Call the function that implements one pipeline step."""
-    if step == "verify-source":
-        ingest.verify_sources(logger)
-    elif step == "ingest":
-        if args.mode == "full":
-            ingest.ingest_full(run_id, logger)
-        else:
-            ingest.ingest_incremental(run_id, logger, force=args.force, stop_after=args.stop_after)
-    elif step == "transform-staging":
-        transform.run_staging(run_id, logger)
-    elif step == "build-curated":
-        transform.run_curated(run_id, logger)
-    elif step == "load-postgres":
-        storage.load_curated(run_id, logger)
-    elif step == "benchmark":
-        benchmark.run_benchmark(run_id, logger)
-    elif step == "train":
-        train.run_training(run_id, logger)
-    elif step == "evaluate":
-        evaluate.evaluate_model(run_id, logger)
-    elif step == "reproducibility-check":
-        evaluate.reproducibility_check(run_id, logger)
 
 
 def main(argv=None):
@@ -83,7 +65,7 @@ def main(argv=None):
         logger.info("step started")
         started = time.perf_counter()
         try:
-            run_step(step, run_id, logger, args)
+            STEPS[step](run_id, logger, args)
         except Exception as exc:
             logger.error("step failed", error_type=type(exc).__name__, error=str(exc),
                          duration_s=round(time.perf_counter() - started, 2))

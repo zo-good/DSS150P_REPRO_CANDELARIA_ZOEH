@@ -1,0 +1,107 @@
+{
+  "pipeline_run_id": "run_20261012T121356Z_5cc125",
+  "checked_at_utc": "2026-10-12T12:14:12+00:00",
+  "layer": "curated",
+  "passed": 14,
+  "total": 14,
+  "checks": [
+    {
+      "name": "required_columns_present",
+      "category": "schema",
+      "passed": true,
+      "detail": "55 columns",
+      "action": "fail"
+    },
+    {
+      "name": "types_parse",
+      "category": "schema",
+      "passed": true,
+      "detail": "date=datetime64[us], cases=int64",
+      "action": "fail"
+    },
+    {
+      "name": "key_and_target_not_null",
+      "category": "completeness",
+      "passed": true,
+      "detail": "loc, date, cases have no nulls",
+      "action": "fail"
+    },
+    {
+      "name": "features_not_null",
+      "category": "completeness",
+      "passed": true,
+      "detail": "0 null feature values (warm-up weeks are dropped)",
+      "action": "fail"
+    },
+    {
+      "name": "primary_key_unique",
+      "category": "uniqueness",
+      "passed": true,
+      "detail": "0 duplicate ['loc', 'date']",
+      "action": "fail"
+    },
+    {
+      "name": "cases_and_deaths_non_negative",
+      "category": "validity/range",
+      "passed": true,
+      "detail": "min cases 0, min deaths 0.0",
+      "action": "fail"
+    },
+    {
+      "name": "date_is_week_end_sunday",
+      "category": "validity/format",
+      "passed": true,
+      "detail": "every date is a Sunday and equals week_end",
+      "action": "fail"
+    },
+    {
+      "name": "week_is_seven_days",
+      "category": "consistency",
+      "passed": true,
+      "detail": "week_end - week_start = 6 days",
+      "action": "fail"
+    },
+    {
+      "name": "cases_lag1_equals_previous_week",
+      "category": "consistency",
+      "passed": true,
+      "detail": "cases_lag1 == last week's cases for every consecutive city-week",
+      "action": "fail"
+    },
+    {
+      "name": "expected_city_count",
+      "category": "business rule",
+      "passed": true,
+      "detail": "41 cities (contract expects 41)",
+      "action": "fail"
+    },
+    {
+      "name": "no_forbidden_features",
+      "category": "predictive integrity",
+      "passed": true,
+      "detail": "forbidden columns in feature list: none",
+      "action": "fail"
+    },
+    {
+      "name": "built_from_contract_source",
+      "category": "freshness/applicability",
+      "passed": true,
+      "detail": "every row came from the source file named in the contract",
+      "action": "fail"
+    },
+    {
+      "name": "postgres_rows_match_curated_file",
+      "category": "consistency",
+      "passed": true,
+      "detail": "postgres 10433 vs curated file 10433",
+      "action": "fail"
+    },
+    {
+      "name": "postgres_keys_unique",
+      "category": "uniqueness",
+      "passed": true,
+      "detail": "0 duplicate keys in postgres",
+      "action": "fail"
+    }
+  ]
+}

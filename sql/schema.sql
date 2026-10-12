@@ -79,3 +79,23 @@ CREATE TABLE IF NOT EXISTS load_audit (
     rows_in_table    INTEGER      NOT NULL,
     loaded_at_utc    TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
+
+-- One row per pipeline run: final status, row counts per layer, and the headline metric.
+CREATE TABLE IF NOT EXISTS pipeline_run_summary (
+    pipeline_run_id        TEXT             PRIMARY KEY,
+    status                 TEXT             NOT NULL,
+    started_at_utc         TIMESTAMPTZ,
+    finished_at_utc        TIMESTAMPTZ,
+    raw_rows               INTEGER,
+    quarantined_rows       INTEGER,
+    staging_rows           INTEGER,
+    curated_rows           INTEGER,
+    train_rows             INTEGER,
+    test_rows              INTEGER,
+    prediction_rows        INTEGER,
+    primary_metric         TEXT,
+    primary_metric_value   DOUBLE PRECISION,
+    reproducibility_passed BOOLEAN,
+    summary                JSONB            NOT NULL,
+    published_at_utc       TIMESTAMPTZ      NOT NULL DEFAULT now()
+);
