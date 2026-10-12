@@ -1,0 +1,59 @@
+// DSS150P Lab 4 - dataset-level lineage: fields and datasets through every layer
+// render: dot -Tpng lineage.dot -o ../lineage.png
+digraph lineage {
+  graph [rankdir=TB, fontname="DejaVu Sans", fontsize=20, labelloc=t, pad=0.4, nodesep=0.35, ranksep=0.45, bgcolor="white",
+         label="DSS150P Lab 4 - Data lineage (dataset level)\nsource fields -> raw -> staging -> curated -> model features -> model -> predictions / metrics"];
+  node  [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=10, color="#4a5568", fillcolor="#f7fafc"];
+  edge  [fontname="DejaVu Sans", fontsize=9, color="#4a5568", arrowsize=0.7];
+
+  // ---------------- SOURCE
+  subgraph cluster_s { label="SOURCE"; style="rounded,filled"; fillcolor="#fffff0"; color="#d69e2e"; fontsize=12;
+    s_doh [label=<<b>doh-epi-dengue-data-2016-2021.csv</b><br/>loc, cases, deaths, date (M/D/YYYY), Region<br/>32,702 rows incl. 1 HXL tag row>];
+    s_w1 [label=<<b>daily_data_combined_2010_to_2019.csv</b><br/>city_name, datetime, 22 weather fields<br/>500,324 rows>];
+    s_w2 [label=<<b>daily_data_combined_2020_to_2023.csv</b><br/>city_name, datetime, 20 weather fields<br/>206,001 rows (5,844 duplicate city-days)>];
+  }
+  // ---------------- RAW
+  subgraph cluster_r { label="RAW"; style="rounded,filled"; fillcolor="#fffaf0"; color="#dd6b20"; fontsize=12;
+    r_batches [label=<<b>data/raw/dengue_batches/dengue_YYYY.csv</b><br/>6 yearly batches, 32,701 rows, text kept as-is<br/>+ source_row_key (loc|date), record_hash,<br/>pipeline_run_id, ingested_at_utc, source_checksum>];
+    r_weather [label=<<b>data/raw/weather/*.csv</b><br/>byte-exact copies (checksum verified)>];
+    q_hxl [label=<<b>quarantine/ingest_unparseable_date.csv</b><br/>1 HXL tag row>, fillcolor="#fed7d7"];
+  }
+  // ---------------- STAGING
+  subgraph cluster_st { label="STAGING"; style="rounded,filled"; fillcolor="#f0fff4"; color="#38a169"; fontsize=12;
+    st_dengue [label=<<b>staging/dengue_weekly.parquet</b><br/>cases int, deaths int|null, date (Sunday)<br/>contract rules, dup (loc,date) &#8594; quarantine<br/>32,701 rows>];
+    st_weather [label=<<b>staging/weather_daily.parquet</b><br/>city_name, datetime + 16 weather fields<br/>range rules; duplicates: policy keep_all<br/>706,325 rows>];
+  }
+  // ---------------- CURATED
+  subgraph cluster_c { label="CURATED"; style="rounded,filled"; fillcolor="#ebf8ff"; color="#3182ce"; fontsize=12;
+    c_weekly [label=<<b>weekly weather</b> (Mon-Sun)<br/>7 fields summed (rain, sunshine, radiation...)<br/>9 fields averaged, 2 dp (temperature, wind)>];
+    c_join [label=<<b>join</b> via config/city_mapping.yml<br/>dengue week end (Sunday) = weather week end<br/>41 cities (CAGAYAN DE ORO dropped: leading space)<br/>deaths null &#8594; 0; 10,597 rows>];
+    c_feat [label=<<b>curated/dengue_weather_weekly.parquet</b><br/>+ week_of_year, month, woy_sin/cos<br/>+ 5 drivers x lags 1-4, 2 x 4-week rolling means<br/>+ cases_lag1-3, cases_next, log_cases<br/>warm-up weeks dropped &#8594; 10,433 rows, PK (loc,date)>];
+    pg [label=<<b>PostgreSQL curated_dengue_weekly</b><br/>upsert on (loc,date), row_hash>, shape=cylinder, fillcolor="#e9d8fd"];
+  }
+  // ---------------- MODEL INPUT
+  subgraph cluster_m { label="MODEL INPUT"; style="rounded,filled"; fillcolor="#faf5ff"; color="#805ad5"; fontsize=12;
+    m_order [label=<<b>group row order</b><br/>sort(loc,date) then sort(date)<br/>order hash in split_manifest.json>];
+    m_split [label=<<b>chronological split</b> at 80th pct date<br/>2020-01-12: train 8,373 / test 2,060>];
+    m_label [label=<<b>severity label</b> Low / Moderate / High<br/>per-city q33 / q66 of cases, TRAIN only>];
+    m_x [label=<<b>X</b>: 45 declared features<br/>+ one-hot loc = 86 columns<br/>(cases, deaths, cases_next forbidden)>];
+  }
+  // ---------------- MODEL + OUTPUTS
+  subgraph cluster_o { label="MODEL / OUTPUTS"; style="rounded,filled"; fillcolor="#f0fff4"; color="#2f855a"; fontsize=12;
+    model [label=<<b>RandomForestClassifier</b> 300 trees, seed 42<br/><b>RandomForestRegressor</b> (cases_next)>];
+    preds [label=<<b>outputs/predictions.csv</b><br/>2,060 test rows>];
+    metrics [label=<<b>outputs/metrics.json</b><br/>macro-F1 0.4972, acc 0.7184>];
+    compare [label=<<b>metrics_comparison.json</b><br/>vs expected_metrics.json 0.494<br/>diff +0.0032 within &#177;0.01: PASS>, fillcolor="#c6f6d5"];
+  }
+
+  s_doh -> r_batches [label="ingest (yearly batches, watermark)"];
+  s_doh -> q_hxl [color="#e53e3e"];
+  s_w1 -> r_weather; s_w2 -> r_weather;
+  r_batches -> st_dengue [label="type + validate"];
+  r_weather -> st_weather [label="type + validate"];
+  st_weather -> c_weekly;
+  st_dengue -> c_join; c_weekly -> c_join;
+  c_join -> c_feat [label="feature engineering\n(per city, past only)"];
+  c_feat -> pg [label="load_postgres"];
+  c_feat -> m_order -> m_split -> m_label -> m_x -> model;
+  model -> preds -> metrics -> compare;
+}

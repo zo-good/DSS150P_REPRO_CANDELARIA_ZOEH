@@ -1,0 +1,68 @@
+// DSS150P Lab 4 - architecture: components and data movement
+// render: dot -Tpng -Gdpi=110 architecture.dot -o ../architecture.png
+digraph architecture {
+  graph [rankdir=TB, compound=true, mclimit=0.01, fontname="DejaVu Sans", fontsize=20, labelloc=t, pad=0.4,
+         nodesep=0.25, ranksep=0.7, bgcolor="white", newrank=true,
+         label="DSS150P Lab 4 - Reproducible dengue severity pipeline: architecture"];
+  node  [fontname="DejaVu Sans", fontsize=10, color="#4a5568", penwidth=1.2];
+  edge  [fontname="DejaVu Sans", fontsize=9, color="#4a5568", arrowsize=0.7];
+
+  // -------- orchestration (top)
+  subgraph cluster_orch {
+    label="Orchestration (Docker Compose)"; style="rounded,filled"; fillcolor="#ebf8ff"; color="#3182ce"; fontsize=12; fontcolor="#2b6cb0";
+    airflow [shape=box, style="rounded,filled", fillcolor="#bee3f8",
+             label="airflow container (Airflow 3.3.1 standalone)\nDAG predictive_repro_pipeline: 10 BashOperator tasks\nmanual trigger, catchup=False, params mode / inject_failure\nretries on safe tasks, timeouts, failure callback"];
+    runall [shape=box, style="rounded,filled", fillcolor="#e2e8f0",
+            label="pipeline container (python:3.12-slim)\nor laptop venv:  python -m src.cli run-all"];
+  }
+
+  // -------- processing steps (middle row)
+  subgraph cluster_proc {
+    label="src/  -  reusable Python modules, one CLI step each (pinned requirements.txt, own venv)"; style="rounded,filled";
+    fillcolor="#f0fff4"; color="#38a169"; fontsize=12;
+    node [shape=box, style="rounded,filled", fillcolor="#ffffff"];
+    p_ingest   [label="ingest\nverify SHA-256\nyearly batches\ncheckpoint"];
+    p_vraw     [label="validate-raw\n8 checks"];
+    p_stage    [label="transform-staging\ntypes, contract rules"];
+    p_curate   [label="build-curated\nweekly join + features\nquality gate (12 checks)"];
+    p_load     [label="load-postgres\nON CONFLICT upsert\none transaction"];
+    p_vcur     [label="validate-curated\nfile + DB checks"];
+    p_train    [label="train / evaluate\nRandomForest, seed 42"];
+    p_repro    [label="reproducibility-check\nvs expected_metrics.json"];
+    p_publish  [label="publish-outputs\nrun summary"];
+    { rank=same; p_ingest; p_vraw; p_stage; p_curate; p_load; p_vcur; p_train; p_repro; p_publish; }
+    p_ingest -> p_vraw -> p_stage -> p_curate -> p_load -> p_vcur -> p_train -> p_repro -> p_publish [color="#38a169", penwidth=1.6, weight=100];
+  }
+
+  // -------- data stores (bottom row)
+  node [shape=folder, style="filled", fillcolor="#fffaf0"];
+  d_source  [label="data/source\nDOH dengue CSV (Git)\n2 weather CSVs (Drive)\n+ manifest, contract", fillcolor="#fefcbf"];
+  d_raw     [label="data/raw\nbatches + snapshots\nstate/checkpoint.json"];
+  d_quar    [label="data/quarantine\nrejected rows", fillcolor="#fed7d7"];
+  d_staging [label="data/staging\nParquet"];
+  d_curated [label="data/curated\nParquet + CSV"];
+  d_pg      [shape=cylinder, fillcolor="#e9d8fd", color="#805ad5",
+             label="PostgreSQL 16\ncurated_dengue_weekly\nload_audit\npipeline_run_summary"];
+  d_out     [label="outputs/\nmetrics, predictions,\ncomparison, quality checks"];
+  d_logs    [shape=note, label="logs/pipeline.jsonl\none run id per run"];
+  consumer  [shape=oval, style="filled", fillcolor="#fefcbf", label="Consumers\nreviewer / analyst / report"];
+
+  { rank=same; d_source; d_raw; d_quar; d_staging; d_curated; d_pg; d_out; d_logs; }
+  { rank=same; airflow; runall; }
+  d_source -> d_raw -> d_quar -> d_staging -> d_curated -> d_pg -> d_out -> d_logs [style=invis];
+  // reads (store -> step) and writes (step -> store)
+  d_source -> p_ingest;
+  p_ingest -> d_raw; p_ingest -> d_quar [color="#e53e3e"];
+  d_raw -> p_vraw [style=dashed]; d_raw -> p_stage;
+  p_stage -> d_staging; d_staging -> p_curate;
+  p_curate -> d_curated; p_curate -> d_quar [color="#e53e3e", label="rejected table"];
+  d_curated -> p_load; p_load -> d_pg;
+  d_pg -> p_vcur [style=dashed]; d_curated -> p_train;
+  p_train -> d_out; d_out -> p_repro [style=dashed];
+  p_publish -> d_pg; d_out -> consumer;
+  p_publish -> d_logs [style=dotted, color="#a0aec0", label="reads step history"];
+
+  // orchestration -> every step (one compound edge into the cluster)
+  airflow -> p_curate [lhead=cluster_proc, style=dashed, color="#3182ce", label="runs each step as a task (shared --run-id)"];
+  runall  -> p_train [lhead=cluster_proc, style=dashed, color="#718096", label="or all steps in order"];
+}
