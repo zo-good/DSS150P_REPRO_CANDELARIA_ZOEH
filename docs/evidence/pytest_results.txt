@@ -1,0 +1,17 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH
+collecting ... collected 9 items
+
+tests/test_integration.py::test_ingestion_resume_and_rerun_create_no_duplicates PASSED [ 11%]
+tests/test_integration.py::test_raw_to_curated_reproduces_group_dataset PASSED [ 22%]
+tests/test_integration.py::test_quality_gate_blocks_bad_data_and_keeps_good_file PASSED [ 33%]
+tests/test_integration.py::test_postgres_load_is_rerun_safe PASSED       [ 44%]
+tests/test_unit.py::test_row_keys_are_deterministic_and_content_based PASSED [ 55%]
+tests/test_unit.py::test_weekly_weather_sums_totals_and_averages_temperatures PASSED [ 66%]
+tests/test_unit.py::test_severity_thresholds_use_training_period_only PASSED [ 77%]
+tests/test_unit.py::test_leakage_guard_rejects_forbidden_feature PASSED  [ 88%]
+tests/test_unit.py::test_row_hash_ignores_float_noise_but_catches_real_changes PASSED [100%]
+
+============================= 9 passed in 35.77s ==============================
