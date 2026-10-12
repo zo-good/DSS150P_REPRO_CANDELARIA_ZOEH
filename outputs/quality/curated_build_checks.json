@@ -1,6 +1,6 @@
 {
-  "pipeline_run_id": "run_20261012T121356Z_5cc125",
-  "checked_at_utc": "2026-10-12T12:14:05+00:00",
+  "pipeline_run_id": "af_manual__2026-10-12T1249314557600000",
+  "checked_at_utc": "2026-10-12T12:49:53+00:00",
   "layer": "curated_build",
   "passed": 12,
   "total": 12,

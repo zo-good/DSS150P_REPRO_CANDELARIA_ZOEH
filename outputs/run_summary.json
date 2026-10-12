@@ -1,8 +1,8 @@
 {
-  "pipeline_run_id": "run_20261012T121356Z_5cc125",
+  "pipeline_run_id": "af_manual__2026-10-12T1249314557600000",
   "status": "success",
-  "started_at_utc": "2026-10-12T12:13:56+00:00",
-  "finished_at_utc": "2026-10-12T12:14:28+00:00",
+  "started_at_utc": "2026-10-12T12:49:34+00:00",
+  "finished_at_utc": "2026-10-12T12:50:33+00:00",
   "raw_rows": 32701,
   "quarantined_rows": 1,
   "staging_rows": 32701,
@@ -29,61 +29,61 @@
   },
   "steps": {
     "ingest": {
-      "started_at_utc": "2026-10-12T12:13:56+00:00",
-      "finished_at_utc": "2026-10-12T12:14:01+00:00",
+      "started_at_utc": "2026-10-12T12:49:34+00:00",
+      "finished_at_utc": "2026-10-12T12:49:40+00:00",
       "status": "success",
-      "duration_s": 4.32
+      "duration_s": 5.56
     },
     "validate-raw": {
-      "started_at_utc": "2026-10-12T12:14:01+00:00",
-      "finished_at_utc": "2026-10-12T12:14:01+00:00",
+      "started_at_utc": "2026-10-12T12:49:42+00:00",
+      "finished_at_utc": "2026-10-12T12:49:42+00:00",
       "status": "success",
-      "duration_s": 0.19
+      "duration_s": 0.39
     },
     "transform-staging": {
-      "started_at_utc": "2026-10-12T12:14:01+00:00",
-      "finished_at_utc": "2026-10-12T12:14:04+00:00",
+      "started_at_utc": "2026-10-12T12:49:44+00:00",
+      "finished_at_utc": "2026-10-12T12:49:49+00:00",
       "status": "success",
-      "duration_s": 3.41
+      "duration_s": 4.5
     },
     "build-curated": {
-      "started_at_utc": "2026-10-12T12:14:04+00:00",
-      "finished_at_utc": "2026-10-12T12:14:05+00:00",
+      "started_at_utc": "2026-10-12T12:49:52+00:00",
+      "finished_at_utc": "2026-10-12T12:49:54+00:00",
       "status": "success",
-      "duration_s": 1.14
+      "duration_s": 1.9
     },
     "load-postgres": {
-      "started_at_utc": "2026-10-12T12:14:05+00:00",
-      "finished_at_utc": "2026-10-12T12:14:12+00:00",
+      "started_at_utc": "2026-10-12T12:49:57+00:00",
+      "finished_at_utc": "2026-10-12T12:50:04+00:00",
       "status": "success",
-      "duration_s": 6.44
+      "duration_s": 6.91
     },
     "validate-curated": {
-      "started_at_utc": "2026-10-12T12:14:12+00:00",
-      "finished_at_utc": "2026-10-12T12:14:12+00:00",
+      "started_at_utc": "2026-10-12T12:50:07+00:00",
+      "finished_at_utc": "2026-10-12T12:50:07+00:00",
       "status": "success",
-      "duration_s": 0.1
+      "duration_s": 0.23
     },
     "train": {
-      "started_at_utc": "2026-10-12T12:14:12+00:00",
-      "finished_at_utc": "2026-10-12T12:14:28+00:00",
+      "started_at_utc": "2026-10-12T12:50:10+00:00",
+      "finished_at_utc": "2026-10-12T12:50:26+00:00",
       "status": "success",
-      "duration_s": 16.35
+      "duration_s": 16.81
     },
     "evaluate": {
-      "started_at_utc": "2026-10-12T12:14:28+00:00",
-      "finished_at_utc": "2026-10-12T12:14:28+00:00",
+      "started_at_utc": "2026-10-12T12:50:29+00:00",
+      "finished_at_utc": "2026-10-12T12:50:29+00:00",
       "status": "success",
-      "duration_s": 0.05
+      "duration_s": 0.06
     },
     "reproducibility-check": {
-      "started_at_utc": "2026-10-12T12:14:28+00:00",
-      "finished_at_utc": "2026-10-12T12:14:28+00:00",
+      "started_at_utc": "2026-10-12T12:50:31+00:00",
+      "finished_at_utc": "2026-10-12T12:50:31+00:00",
       "status": "success",
-      "duration_s": 0.02
+      "duration_s": 0.01
     },
     "publish-outputs": {
-      "started_at_utc": "2026-10-12T12:14:28+00:00",
+      "started_at_utc": "2026-10-12T12:50:33+00:00",
       "status": "running"
     }
   }

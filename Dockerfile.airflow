@@ -1,0 +1,10 @@
+# Airflow image + a SEPARATE virtual environment for the pipeline code.
+# Airflow pins its own numpy/pyarrow/SQLAlchemy versions; keeping the pipeline in its own
+# venv means the model always runs with exactly the versions in requirements.txt.
+FROM apache/airflow:3.3.1-python3.12
+
+USER root
+COPY requirements.txt /tmp/requirements.txt
+RUN python -m venv /opt/pipeline-venv \
+ && PIP_USER=false /opt/pipeline-venv/bin/pip install --no-cache-dir -r /tmp/requirements.txt
+USER airflow

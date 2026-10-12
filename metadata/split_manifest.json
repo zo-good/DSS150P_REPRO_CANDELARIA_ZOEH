@@ -1,6 +1,6 @@
 {
-  "pipeline_run_id": "run_20261012T121356Z_5cc125",
-  "created_at_utc": "2026-10-12T12:14:28+00:00",
+  "pipeline_run_id": "af_manual__2026-10-12T1249314557600000",
+  "created_at_utc": "2026-10-12T12:50:26+00:00",
   "split_method": "chronological; train = date <= quantile(date, train_fraction)",
   "train_fraction": 0.8,
   "split_date": "2020-01-12",

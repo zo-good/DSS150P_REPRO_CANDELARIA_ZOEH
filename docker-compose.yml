@@ -35,5 +35,29 @@ services:
       - ./logs:/app/logs
     command: ["python", "-m", "src.cli", "run-all"]
 
+  airflow:
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
+    image: dss150p-lab4-airflow
+    container_name: dss150p-lab4-airflow
+    command: standalone                     # web UI + scheduler + DAG processor in one container
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      PIPELINE_PROJECT_DIR: /opt/project
+      PIPELINE_PYTHON: /opt/pipeline-venv/bin/python
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/project/dags
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "True"   # local lab only: no login screen
+    ports:
+      - "8080:8080"                         # Airflow UI at http://localhost:8080
+    volumes:
+      - .:/opt/project                      # the whole project, so tasks read/write your folders
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   pgdata:

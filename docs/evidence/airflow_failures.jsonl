@@ -1,0 +1,1 @@
+{"ts_utc": "2026-10-12T12:45:47+00:00", "dag_id": "predictive_repro_pipeline", "task_id": "build_curated", "airflow_run_id": "manual__2026-10-12T12:45:23.971310+00:00", "try_number": 1, "error": "Bash command failed. The command returned a non-zero exit code 1."}
