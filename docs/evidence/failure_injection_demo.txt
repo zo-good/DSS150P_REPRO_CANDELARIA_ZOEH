@@ -1,36 +1,95 @@
-﻿**********************
-Windows PowerShell transcript start
-Start time: 20261012201341
-Username: LUMILIPAD\zoehc
-RunAs User: LUMILIPAD\zoehc
-Configuration Name: 
-Machine: LUMILIPAD (Microsoft Windows NT 10.0.26200.0)
-Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\zoehc\AppData\Local\Programs\Microsoft VS Code\2a59476c9b\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
-Process ID: 3716
-PSVersion: 5.1.26100.9444
-PSEdition: Desktop
-PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9444
-BuildVersion: 10.0.26100.9444
-CLRVersion: 4.0.30319.42000
-WSManStackVersion: 3.0
-PSRemotingProtocolVersion: 2.3
-SerializationVersion: 1.1.0.1
-**********************
-Transcript started, output file is docs/evidence/failure_injection_demo.txt
+Failure-injection and recovery demo (DSS150P Lab 4), 2026-10-12 (Asia/Manila)
+1) curated file timestamp before, 2) bad run with --inject-failure negative_cases (must stop at build-curated),
+3) proof the good curated file was kept and the bad table quarantined, 4) recovery run, 5) run summary in PostgreSQL.
+Note: Windows PowerShell 5.1 transcripts did not capture output from native programs (python, docker), so this file is the terminal output copied in full.
 
-
+# 1) curated file timestamp BEFORE the bad run
 Name                          LastWriteTime
 ----                          -------------
 dengue_weather_weekly.parquet 10/12/2026 7:55:34 PM
+
+# 2) bad run: python -m src.cli run-all --inject-failure negative_cases
+INFO    [ingest] step started
+INFO    [ingest] source verified file=doh-epi-dengue-data-2016-2021.csv sha256=e1968c4009ad rows=32702
+INFO    [ingest] source verified file=daily_data_combined_2010_to_2019.csv sha256=26665bd48292 rows=500324
+INFO    [ingest] source verified file=daily_data_combined_2020_to_2023.csv sha256=73401480f88b rows=206001
+INFO    [ingest] weather raw copy up to date, skipped file=daily_data_combined_2010_to_2019.csv
+INFO    [ingest] weather raw copy up to date, skipped file=daily_data_combined_2020_to_2023.csv
+INFO    [ingest] checkpoint loaded watermark=2021-01-10 committed=6
+WARNING [ingest] rows quarantined at ingestion rows=1 file=data/quarantine/ingest_unparseable_date.csv
+INFO    [ingest] batch already committed, skipped batch=dengue_2016
+INFO    [ingest] batch already committed, skipped batch=dengue_2017
+INFO    [ingest] batch already committed, skipped batch=dengue_2018
+INFO    [ingest] batch already committed, skipped batch=dengue_2019
+INFO    [ingest] batch already committed, skipped batch=dengue_2020
+INFO    [ingest] batch already committed, skipped batch=dengue_2021
+INFO    [ingest] incremental ingestion finished batches_added=0 total_raw_rows=32701 watermark=2021-01-10
+INFO    [ingest] step finished duration_s=4.11
+INFO    [validate-raw] step started
+INFO    [validate-raw] quality check layer=raw check=source_checksum_matches_contract category=freshness/applicability passed=True detail=source sha256 e1968c4009ad...
+INFO    [validate-raw] quality check layer=raw check=raw_batches_exist category=completeness passed=True detail=6 batch files
+INFO    [validate-raw] quality check layer=raw check=required_columns_present category=schema passed=True detail=missing: none
+INFO    [validate-raw] quality check layer=raw check=raw_plus_quarantine_equals_source category=completeness passed=True detail=raw 32701 + quarantined 1 vs source 32702
+INFO    [validate-raw] quality check layer=raw check=source_row_key_unique category=uniqueness passed=True detail=0 duplicate keys
+INFO    [validate-raw] quality check layer=raw check=audit_columns_filled category=completeness passed=True detail=columns: ['pipeline_run_id', 'ingested_at_utc', 'source_file', 'source_checksum']
+INFO    [validate-raw] quality check layer=raw check=checkpoint_matches_raw_rows category=consistency passed=True detail=checkpoint rows 32701 vs raw 32701
+INFO    [validate-raw] quality check layer=raw check=min_rows category=completeness passed=True detail=32701 rows (minimum 30000)
+INFO    [validate-raw] step finished duration_s=0.21
+INFO    [transform-staging] step started
+WARNING [transform-staging] null deaths kept as null in staging rows=1
+INFO    [transform-staging] staging written table=dengue_weekly rows_in=32701 rows_out=32701
+WARNING [transform-staging] duplicate city-days found rows=11688 policy=keep_all cities=['Lipa City', 'Lucena', 'Maasin', 'Mabalacat City']
+INFO    [transform-staging] staging written table=weather_daily rows_in=706325 rows_out=706325
+INFO    [transform-staging] step finished duration_s=3.43
+INFO    [build-curated] step started
+WARNING [build-curated] mapped city dropped: its name only matches after trimming spaces cities=['CAGAYAN DE ORO CITY'] setting=transform.strip_location_whitespace
+WARNING [build-curated] FAILURE INJECTED ON PURPOSE (demo) injection=negative_cases
+INFO    [build-curated] quality check layer=curated_build check=required_columns_present category=schema passed=True detail=55 columns
+INFO    [build-curated] quality check layer=curated_build check=types_parse category=schema passed=True detail=date=datetime64[us], cases=int64
+INFO    [build-curated] quality check layer=curated_build check=key_and_target_not_null category=completeness passed=True detail=loc, date, cases have no nulls
+INFO    [build-curated] quality check layer=curated_build check=features_not_null category=completeness passed=True detail=0 null feature values (warm-up weeks are dropped)
+INFO    [build-curated] quality check layer=curated_build check=primary_key_unique category=uniqueness passed=True detail=0 duplicate ['loc', 'date']
+ERROR   [build-curated] quality check layer=curated_build check=cases_and_deaths_non_negative category=validity/range passed=False detail=min cases -5, min deaths 0.0
+INFO    [build-curated] quality check layer=curated_build check=date_is_week_end_sunday category=validity/format passed=True detail=every date is a Sunday and equals week_end
+INFO    [build-curated] quality check layer=curated_build check=week_is_seven_days category=consistency passed=True detail=week_end - week_start = 6 days
+ERROR   [build-curated] quality check layer=curated_build check=cases_lag1_equals_previous_week category=consistency passed=False detail=cases_lag1 == last week's cases for every consecutive city-week
+INFO    [build-curated] quality check layer=curated_build check=expected_city_count category=business rule passed=True detail=41 cities (contract expects 41)
+INFO    [build-curated] quality check layer=curated_build check=no_forbidden_features category=predictive integrity passed=True detail=forbidden columns in feature list: none
+INFO    [build-curated] quality check layer=curated_build check=built_from_contract_source category=freshness/applicability passed=True detail=every row came from the source file named in the contract
+ERROR   [build-curated] curated table rejected, previous curated files kept rejected_copy=data/quarantine/curated_rejected_run_20261012T121345Z_d67215.csv
+ERROR   [build-curated] step failed error_type=DataQualityError error=curated_build: 2 check(s) failed: cases_and_deaths_non_negative, cases_lag1_equals_previous_week duration_s=1.32
 exit code: 1
+
+# 3) curated file timestamp AFTER the bad run (unchanged) + quarantine folder
+Name                          LastWriteTime
+----                          -------------
 dengue_weather_weekly.parquet 10/12/2026 7:55:34 PM
-.gitkeep                      10/11/2026 11:15:2...
-curated_rejected_run_20261... 10/12/2026 8:13:54 PM
+
+.gitkeep                      10/11/2026 11:15 PM
+curated_rejected_run_20261012T121345Z_d67215.csv   10/12/2026 8:13:54 PM
 ingest_unparseable_date.csv   10/12/2026 8:13:48 PM
 
+# 4) recovery run: python -m src.cli run-all   (quality-check lines shortened: all passed=True)
+INFO    [ingest] step finished duration_s=4.32                 (batches_added=0, total_raw_rows=32701)
+INFO    [validate-raw] step finished duration_s=0.19           (8/8 checks passed=True)
+INFO    [transform-staging] step finished duration_s=3.41
+INFO    [build-curated] curated written table=dengue_weather_weekly rows=10433 cities=41 first_date=2016-02-07 last_date=2021-01-10
+INFO    [build-curated] step finished duration_s=1.14           (12/12 checks passed=True)
+INFO    [load-postgres] postgres load committed table=curated_dengue_weekly rows_in_file=10433 inserted=0 updated=0 unchanged=10433 rows_in_table=10433
+INFO    [load-postgres] step finished duration_s=6.44
+INFO    [validate-curated] quality check layer=curated check=postgres_rows_match_curated_file category=consistency passed=True detail=postgres 10433 vs curated file 10433
+INFO    [validate-curated] quality check layer=curated check=postgres_keys_unique category=uniqueness passed=True detail=0 duplicate keys in postgres
+INFO    [validate-curated] step finished duration_s=0.1         (14/14 checks passed=True)
+INFO    [train] models trained split_date=2020-01-12 train_rows=8373 test_rows=2060 n_features=86
+INFO    [train] step finished duration_s=16.35
+INFO    [evaluate] metrics written accuracy=0.7184 macro_f1=0.4972 rf_mae=5.8981 naive_mae=3.8307
+INFO    [reproducibility-check] reproducibility check metric=severity_macro_f1 expected=0.494 actual=0.4972 difference=0.0032 tolerance=0.01 data_ok=True passed=True
+INFO    [publish-outputs] run summary published status=success file=outputs/run_summary.json table=pipeline_run_summary raw_rows=32701 quarantined_rows=1 staging_rows=32701 curated_rows=10433 train_rows=8373 test_rows=2060 prediction_rows=2060
+INFO    [publish-outputs] step finished duration_s=0.05
 exit code: 0
 
-**********************
-Windows PowerShell transcript end
-End time: 20261012201429
-**********************
+# 5) run summary record in PostgreSQL
+       pipeline_run_id       | status  | raw_rows | quarantined_rows | curated_rows | train_rows | test_rows | prediction_rows | primary_metric_value | reproducibility_passed
+-----------------------------+---------+----------+------------------+--------------+------------+-----------+-----------------+----------------------+------------------------
+ run_20261012T121356Z_5cc125 | success |    32701 |                1 |        10433 |       8373 |      2060 |            2060 |               0.4972 | t
+(1 row)

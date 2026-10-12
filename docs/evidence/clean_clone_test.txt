@@ -1,45 +1,291 @@
-﻿**********************
-Windows PowerShell transcript start
-Start time: 20261012211044
-Username: LUMILIPAD\zoehc
-RunAs User: LUMILIPAD\zoehc
-Configuration Name: 
-Machine: LUMILIPAD (Microsoft Windows NT 10.0.26200.0)
-Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\zoehc\AppData\Local\Programs\Microsoft VS Code\2a59476c9b\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
-Process ID: 3716
-PSVersion: 5.1.26100.9444
-PSEdition: Desktop
-PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9444
-BuildVersion: 10.0.26100.9444
-CLRVersion: 4.0.30319.42000
-WSManStackVersion: 3.0
-PSRemotingProtocolVersion: 2.3
-SerializationVersion: 1.1.0.1
-**********************
-Transcript started, output file is ..\DSS150P_REPRO_CANDELARIA_ZOEH\docs\evidence\clean_clone_test.txt
+Clean-clone reproducibility test (DSS150P Lab 4)
+Date: 2026-10-12 (Asia/Manila). Fresh clone into a new folder, original database volume deleted
+beforehand (docker compose down -v), weather files placed in data/source/, README Option B (Docker).
+Note: Windows PowerShell 5.1 transcripts did not capture output from native programs (python, docker), so this file is the terminal output copied in full.
+
+========================================================================================
+(.venv) PS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> docker compose down -v
+[+] down 4/4
+ ✔ Container dss150p-lab4-airflow                Removed
+ ✔ Container dss150p-lab4-postgres               Removed
+ ✔ Network dss150p_repro_candelaria_zoeh_default Removed
+ ✔ Volume dss150p_repro_candelaria_zoeh_pgdata   Removed
+(.venv) PS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> cd ..
+>> git clone https://github.com/zo-good/DSS150P_REPRO_CANDELARIA_ZOEH.git clean_clone_test
+>> cd clean_clone_test
+>> git log --oneline | Select-Object -First 5
+Cloning into 'clean_clone_test'...
+remote: Enumerating objects: 194, done.
+remote: Counting objects: 100% (194/194), done.
+remote: Compressing objects: 100% (139/139), done.
+remote: Total 194 (delta 87), reused 159 (delta 52), pack-reused 0 (from 0)
+Receiving objects: 100% (194/194), 1.22 MiB | 2.92 MiB/s, done.
+Resolving deltas: 100% (87/87), done.
 c064b70 docs: add analysis and reflection answers
 d561a4d docs: add reproducibility report with gap table, deviations and acceptance evidence
 78b6d5c docs: add runbook (execution, failures, restart, checkpoint recovery, DB reset, cleanup)
 355d552 docs: write full README from a clean-machine perspective
 56de758 docs: add architecture and dataset-level lineage diagrams
-]633;D;0]633;A]633;P;Cwd=C:\x5cUsers\x5czoehc\x5cDocuments\x5cclean_clone_testPS C:\Users\zoehc\Documents\clean_clone_test> ]633;B
-(.venv) Copy-Item .env.example .env
-docker compose up -d postgres
-docker compose build pipeline
-docker compose run --rm pipeline
-echo "exit code (first run): $LASTEXITCODE"
-docker compose run --rm pipeline
-echo "exit code (second run): $LASTEXITCODE"
-git status
-Stop-Transcript
+========================================================================================
+(.venv) PS C:\Users\zoehc\Documents\clean_clone_test> Copy-Item .env.example .env
+>> docker compose up -d postgres
+>> docker compose build pipeline
+>> docker compose run --rm pipeline
+>> echo "exit code (first run): $LASTEXITCODE"
+>> docker compose run --rm pipeline
+>> echo "exit code (second run): $LASTEXITCODE"
+>> git status
+>> Stop-Transcript
+[+] up 3/3
+ ✔ Network clean_clone_test_default Created                                                                                                     0.0s
+ ✔ Volume clean_clone_test_pgdata   Created                                                                                                     0.0s
+ ✔ Container dss150p-lab4-postgres  Started                                                                                                     0.4s
+#1 [internal] load local bake definitions
+#1 reading from stdin 565B 0.0s done
+#1 DONE 0.0s
 
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 570B 0.0s done
+#2 DONE 0.0s
 
+#3 [internal] load metadata for docker.io/library/python:3.12-slim
+#3 DONE 1.5s
 
+#4 [internal] load .dockerignore
+#4 transferring context: 128B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 113.37kB 0.0s done
+#5 DONE 0.1s
+
+#6 [1/8] FROM docker.io/library/python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1
+#6 resolve docker.io/library/python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1 0.1s done
+#6 DONE 0.1s
+
+#7 [3/8] COPY requirements.txt .
+#7 CACHED
+
+#8 [2/8] WORKDIR /app
+#8 CACHED
+
+#9 [4/8] RUN pip install --no-cache-dir -r requirements.txt
+#9 CACHED
+
+#10 [5/8] COPY src/ src/
+#10 DONE 0.1s
+
+#11 [6/8] COPY config/ config/
+#11 DONE 0.1s
+
+#12 [7/8] COPY sql/ sql/
+#12 DONE 0.1s
+
+#13 [8/8] COPY metadata/ metadata/
+#13 DONE 0.1s
+
+#14 exporting to image
+#14 exporting layers
+#14 exporting layers 0.4s done
+#14 exporting manifest sha256:b161f71c638bb4c0993213d30b23bdc526bf01a3dca06836f3c04bdc19639026 0.0s done
+#14 exporting config sha256:652f35d3f48491e9fb8ead188dc3ddec2fc519b99bc8c96e212576aa566bc654 0.0s done
+#14 exporting attestation manifest sha256:18acde798f5daf003853161e720299040fab8beee5bea09fa0e71ed8b9b56ea1 0.0s done
+#14 exporting manifest list sha256:de621b29ad3aaf4cab607aabfa8eeee331457ce9ef56a9c3e0fb7339eec08a86 0.0s done
+#14 naming to docker.io/library/dss150p-lab4-pipeline:latest
+#14 naming to docker.io/library/dss150p-lab4-pipeline:latest done
+#14 unpacking to docker.io/library/dss150p-lab4-pipeline:latest 0.1s done
+#14 DONE 0.6s
+
+#15 resolving provenance for metadata file
+#15 DONE 0.0s
+[+] build 1/1
+ ✔ Image dss150p-lab4-pipeline Built                                                                                                            3.8s
+[+]  1/1t 1/11
+ ✔ Container dss150p-lab4-postgres Started                                                                                                      0.7s
+Container dss150p-lab4-postgres Waiting 
+Container dss150p-lab4-postgres Healthy 
+Container clean_clone_test-pipeline-run-ec862ada170a Creating 
+Container clean_clone_test-pipeline-run-ec862ada170a Created 
+INFO    [ingest] step started
+INFO    [ingest] source verified file=doh-epi-dengue-data-2016-2021.csv sha256=e1968c4009ad rows=32702
+INFO    [ingest] source verified file=daily_data_combined_2010_to_2019.csv sha256=26665bd48292 rows=500324
+INFO    [ingest] source verified file=daily_data_combined_2020_to_2023.csv sha256=73401480f88b rows=206001
+INFO    [ingest] weather raw copy written file=daily_data_combined_2010_to_2019.csv rows=500324
+INFO    [ingest] weather raw copy written file=daily_data_combined_2020_to_2023.csv rows=206001
+INFO    [ingest] checkpoint loaded watermark=None committed=0
+WARNING [ingest] rows quarantined at ingestion rows=1 file=data/quarantine/ingest_unparseable_date.csv
+INFO    [ingest] batch committed batch=dengue_2016 rows=6329 watermark=2016-12-25
+INFO    [ingest] batch committed batch=dengue_2017 rows=6636 watermark=2017-12-31
+INFO    [ingest] batch committed batch=dengue_2018 rows=6552 watermark=2018-12-30
+INFO    [ingest] batch committed batch=dengue_2019 rows=6426 watermark=2019-12-29
+INFO    [ingest] batch committed batch=dengue_2020 rows=6506 watermark=2020-12-27
+INFO    [ingest] batch committed batch=dengue_2021 rows=252 watermark=2021-01-10
+INFO    [ingest] incremental ingestion finished batches_added=6 total_raw_rows=32701 watermark=2021-01-10
+INFO    [ingest] step finished duration_s=9.12
+INFO    [validate-raw] step started
+INFO    [validate-raw] quality check layer=raw check=source_checksum_matches_contract category=freshness/applicability passed=True detail=source sha256 e1968c4009ad...
+INFO    [validate-raw] quality check layer=raw check=raw_batches_exist category=completeness passed=True detail=6 batch files
+INFO    [validate-raw] quality check layer=raw check=required_columns_present category=schema passed=True detail=missing: none
+INFO    [validate-raw] quality check layer=raw check=raw_plus_quarantine_equals_source category=completeness passed=True detail=raw 32701 + quarantined 1 vs source 32702
+INFO    [validate-raw] quality check layer=raw check=source_row_key_unique category=uniqueness passed=True detail=0 duplicate keys
+INFO    [validate-raw] quality check layer=raw check=audit_columns_filled category=completeness passed=True detail=columns: ['pipeline_run_id', 'ingested_at_utc', 'source_file', 'source_checksum']
+INFO    [validate-raw] quality check layer=raw check=checkpoint_matches_raw_rows category=consistency passed=True detail=checkpoint rows 32701 vs raw 32701
+INFO    [validate-raw] quality check layer=raw check=min_rows category=completeness passed=True detail=32701 rows (minimum 30000)
+INFO    [validate-raw] step finished duration_s=0.27
+INFO    [transform-staging] step started
+WARNING [transform-staging] null deaths kept as null in staging rows=1
+INFO    [transform-staging] staging written table=dengue_weekly rows_in=32701 rows_out=32701
+WARNING [transform-staging] duplicate city-days found rows=11688 policy=keep_all cities=['Lipa City', 'Lucena', 'Maasin', 'Mabalacat City']
+INFO    [transform-staging] staging written table=weather_daily rows_in=706325 rows_out=706325
+INFO    [transform-staging] step finished duration_s=3.04
+INFO    [build-curated] step started
+WARNING [build-curated] mapped city dropped: its name only matches after trimming spaces cities=['CAGAYAN DE ORO CITY'] setting=transform.strip_location_whitespace
+INFO    [build-curated] quality check layer=curated_build check=required_columns_present category=schema passed=True detail=55 columns
+INFO    [build-curated] quality check layer=curated_build check=types_parse category=schema passed=True detail=date=datetime64[us], cases=int64
+INFO    [build-curated] quality check layer=curated_build check=key_and_target_not_null category=completeness passed=True detail=loc, date, cases have no nulls
+INFO    [build-curated] quality check layer=curated_build check=features_not_null category=completeness passed=True detail=0 null feature values (warm-up weeks are dropped)
+INFO    [build-curated] quality check layer=curated_build check=primary_key_unique category=uniqueness passed=True detail=0 duplicate ['loc', 'date']
+INFO    [build-curated] quality check layer=curated_build check=cases_and_deaths_non_negative category=validity/range passed=True detail=min cases 0, min deaths 0.0
+INFO    [build-curated] quality check layer=curated_build check=date_is_week_end_sunday category=validity/format passed=True detail=every date is aSunday and equals week_end
+INFO    [build-curated] quality check layer=curated_build check=week_is_seven_days category=consistency passed=True detail=week_end - week_start = 6 days
+INFO    [build-curated] quality check layer=curated_build check=cases_lag1_equals_previous_week category=consistency passed=True detail=cases_lag1 == last week's cases for every consecutive city-week
+INFO    [build-curated] quality check layer=curated_build check=expected_city_count category=business rule passed=True detail=41 cities (contract expects 41)
+INFO    [build-curated] quality check layer=curated_build check=no_forbidden_features category=predictive integrity passed=True detail=forbidden columns in feature list: none
+INFO    [build-curated] quality check layer=curated_build check=built_from_contract_source category=freshness/applicability passed=True detail=every row came from the source file named in the contract
+INFO    [build-curated] curated written table=dengue_weather_weekly rows=10433 cities=41 first_date=2016-02-07 last_date=2021-01-10
+INFO    [build-curated] step finished duration_s=1.49
+INFO    [load-postgres] step started
+INFO    [load-postgres] postgres load committed table=curated_dengue_weekly rows_in_file=10433 inserted=10433 updated=0 unchanged=0 rows_in_table=10433
+INFO    [load-postgres] step finished duration_s=5.16
+INFO    [validate-curated] step started
+INFO    [validate-curated] quality check layer=curated check=required_columns_present category=schema passed=True detail=55 columns
+INFO    [validate-curated] quality check layer=curated check=types_parse category=schema passed=True detail=date=datetime64[us], cases=int64
+INFO    [validate-curated] quality check layer=curated check=key_and_target_not_null category=completeness passed=True detail=loc, date, cases haveno nulls
+INFO    [validate-curated] quality check layer=curated check=features_not_null category=completeness passed=True detail=0 null feature values (warm-up weeks are dropped)
+INFO    [validate-curated] quality check layer=curated check=primary_key_unique category=uniqueness passed=True detail=0 duplicate ['loc', 'date']
+INFO    [validate-curated] quality check layer=curated check=cases_and_deaths_non_negative category=validity/range passed=True detail=min cases 0, min deaths 0.0
+INFO    [validate-curated] quality check layer=curated check=date_is_week_end_sunday category=validity/format passed=True detail=every date is a Sunday and equals week_end
+INFO    [validate-curated] quality check layer=curated check=week_is_seven_days category=consistency passed=True detail=week_end - week_start = 6 days
+INFO    [validate-curated] quality check layer=curated check=cases_lag1_equals_previous_week category=consistency passed=True detail=cases_lag1 == last week's cases for every consecutive city-week
+INFO    [validate-curated] quality check layer=curated check=expected_city_count category=business rule passed=True detail=41 cities (contract expects 41)
+INFO    [validate-curated] quality check layer=curated check=no_forbidden_features category=predictive integrity passed=True detail=forbidden columns in feature list: none
+INFO    [validate-curated] quality check layer=curated check=built_from_contract_source category=freshness/applicability passed=True detail=every row came from the source file named in the contract
+INFO    [validate-curated] quality check layer=curated check=postgres_rows_match_curated_file category=consistency passed=True detail=postgres 10433 vs curated file 10433
+INFO    [validate-curated] quality check layer=curated check=postgres_keys_unique category=uniqueness passed=True detail=0 duplicate keys in postgres
+INFO    [validate-curated] step finished duration_s=0.2
+INFO    [train] step started
+INFO    [train] models trained split_date=2020-01-12 train_rows=8373 test_rows=2060 n_features=86
+INFO    [train] step finished duration_s=11.65
+INFO    [evaluate] step started
+INFO    [evaluate] metrics written accuracy=0.7184 macro_f1=0.4972 rf_mae=5.8981 naive_mae=3.8307
+INFO    [evaluate] step finished duration_s=0.05
+INFO    [reproducibility-check] step started
+INFO    [reproducibility-check] reproducibility check metric=severity_macro_f1 expected=0.494 actual=0.4972 difference=0.0032 tolerance=0.01 data_ok=True passed=True
+INFO    [reproducibility-check] step finished duration_s=0.01
+INFO    [publish-outputs] step started
+INFO    [publish-outputs] run summary published status=success file=outputs/run_summary.json table=pipeline_run_summary raw_rows=32701 quarantined_rows=1 staging_rows=32701 curated_rows=10433 train_rows=8373 test_rows=2060 prediction_rows=2060
+INFO    [publish-outputs] step finished duration_s=0.05
 exit code (first run): 0
-
+[+]  1/1t 1/11
+ ✔ Container dss150p-lab4-postgres Running                                                                                                      0.0s
+Container dss150p-lab4-postgres Waiting 
+Container dss150p-lab4-postgres Healthy 
+Container clean_clone_test-pipeline-run-01a422a083b9 Creating 
+Container clean_clone_test-pipeline-run-01a422a083b9 Created 
+INFO    [ingest] step started
+INFO    [ingest] source verified file=doh-epi-dengue-data-2016-2021.csv sha256=e1968c4009ad rows=32702
+INFO    [ingest] source verified file=daily_data_combined_2010_to_2019.csv sha256=26665bd48292 rows=500324
+INFO    [ingest] source verified file=daily_data_combined_2020_to_2023.csv sha256=73401480f88b rows=206001
+INFO    [ingest] weather raw copy up to date, skipped file=daily_data_combined_2010_to_2019.csv
+INFO    [ingest] weather raw copy up to date, skipped file=daily_data_combined_2020_to_2023.csv
+INFO    [ingest] checkpoint loaded watermark=2021-01-10 committed=6
+WARNING [ingest] rows quarantined at ingestion rows=1 file=data/quarantine/ingest_unparseable_date.csv
+INFO    [ingest] batch already committed, skipped batch=dengue_2016
+INFO    [ingest] batch already committed, skipped batch=dengue_2017
+INFO    [ingest] batch already committed, skipped batch=dengue_2018
+INFO    [ingest] batch already committed, skipped batch=dengue_2019
+INFO    [ingest] batch already committed, skipped batch=dengue_2020
+INFO    [ingest] batch already committed, skipped batch=dengue_2021
+INFO    [ingest] incremental ingestion finished batches_added=0 total_raw_rows=32701 watermark=2021-01-10
+INFO    [ingest] step finished duration_s=4.05
+INFO    [validate-raw] step started
+INFO    [validate-raw] quality check layer=raw check=source_checksum_matches_contract category=freshness/applicability passed=True detail=source sha256 e1968c4009ad...
+INFO    [validate-raw] quality check layer=raw check=raw_batches_exist category=completeness passed=True detail=6 batch files
+INFO    [validate-raw] quality check layer=raw check=required_columns_present category=schema passed=True detail=missing: none
+INFO    [validate-raw] quality check layer=raw check=raw_plus_quarantine_equals_source category=completeness passed=True detail=raw 32701 + quarantined 1 vs source 32702
+INFO    [validate-raw] quality check layer=raw check=source_row_key_unique category=uniqueness passed=True detail=0 duplicate keys
+INFO    [validate-raw] quality check layer=raw check=audit_columns_filled category=completeness passed=True detail=columns: ['pipeline_run_id', 'ingested_at_utc', 'source_file', 'source_checksum']
+INFO    [validate-raw] quality check layer=raw check=checkpoint_matches_raw_rows category=consistency passed=True detail=checkpoint rows 32701 vs raw 32701
+INFO    [validate-raw] quality check layer=raw check=min_rows category=completeness passed=True detail=32701 rows (minimum 30000)
+INFO    [validate-raw] step finished duration_s=0.29
+INFO    [transform-staging] step started
+WARNING [transform-staging] null deaths kept as null in staging rows=1
+INFO    [transform-staging] staging written table=dengue_weekly rows_in=32701 rows_out=32701
+WARNING [transform-staging] duplicate city-days found rows=11688 policy=keep_all cities=['Lipa City', 'Lucena', 'Maasin', 'Mabalacat City']
+INFO    [transform-staging] staging written table=weather_daily rows_in=706325 rows_out=706325
+INFO    [transform-staging] step finished duration_s=3.01
+INFO    [build-curated] step started
+WARNING [build-curated] mapped city dropped: its name only matches after trimming spaces cities=['CAGAYAN DE ORO CITY'] setting=transform.strip_location_whitespace
+INFO    [build-curated] quality check layer=curated_build check=required_columns_present category=schema passed=True detail=55 columns
+INFO    [build-curated] quality check layer=curated_build check=types_parse category=schema passed=True detail=date=datetime64[us], cases=int64
+INFO    [build-curated] quality check layer=curated_build check=key_and_target_not_null category=completeness passed=True detail=loc, date, cases have no nulls
+INFO    [build-curated] quality check layer=curated_build check=features_not_null category=completeness passed=True detail=0 null feature values (warm-up weeks are dropped)
+INFO    [build-curated] quality check layer=curated_build check=primary_key_unique category=uniqueness passed=True detail=0 duplicate ['loc', 'date']
+INFO    [build-curated] quality check layer=curated_build check=cases_and_deaths_non_negative category=validity/range passed=True detail=min cases 0, min deaths 0.0
+INFO    [build-curated] quality check layer=curated_build check=date_is_week_end_sunday category=validity/format passed=True detail=every date is aSunday and equals week_end
+INFO    [build-curated] quality check layer=curated_build check=week_is_seven_days category=consistency passed=True detail=week_end - week_start = 6 days
+INFO    [build-curated] quality check layer=curated_build check=cases_lag1_equals_previous_week category=consistency passed=True detail=cases_lag1 == last week's cases for every consecutive city-week
+INFO    [build-curated] quality check layer=curated_build check=expected_city_count category=business rule passed=True detail=41 cities (contract expects 41)
+INFO    [build-curated] quality check layer=curated_build check=no_forbidden_features category=predictive integrity passed=True detail=forbidden columns in feature list: none
+INFO    [build-curated] quality check layer=curated_build check=built_from_contract_source category=freshness/applicability passed=True detail=every row came from the source file named in the contract
+INFO    [build-curated] curated written table=dengue_weather_weekly rows=10433 cities=41 first_date=2016-02-07 last_date=2021-01-10
+INFO    [build-curated] step finished duration_s=1.42
+INFO    [load-postgres] step started
+INFO    [load-postgres] postgres load committed table=curated_dengue_weekly rows_in_file=10433 inserted=0 updated=0 unchanged=10433 rows_in_table=10433
+INFO    [load-postgres] step finished duration_s=4.86
+INFO    [validate-curated] step started
+INFO    [validate-curated] quality check layer=curated check=required_columns_present category=schema passed=True detail=55 columns
+INFO    [validate-curated] quality check layer=curated check=types_parse category=schema passed=True detail=date=datetime64[us], cases=int64
+INFO    [validate-curated] quality check layer=curated check=key_and_target_not_null category=completeness passed=True detail=loc, date, cases haveno nulls
+INFO    [validate-curated] quality check layer=curated check=features_not_null category=completeness passed=True detail=0 null feature values (warm-up weeks are dropped)
+INFO    [validate-curated] quality check layer=curated check=primary_key_unique category=uniqueness passed=True detail=0 duplicate ['loc', 'date']
+INFO    [validate-curated] quality check layer=curated check=cases_and_deaths_non_negative category=validity/range passed=True detail=min cases 0, min deaths 0.0
+INFO    [validate-curated] quality check layer=curated check=date_is_week_end_sunday category=validity/format passed=True detail=every date is a Sunday and equals week_end
+INFO    [validate-curated] quality check layer=curated check=week_is_seven_days category=consistency passed=True detail=week_end - week_start = 6 days
+INFO    [validate-curated] quality check layer=curated check=cases_lag1_equals_previous_week category=consistency passed=True detail=cases_lag1 == last week's cases for every consecutive city-week
+INFO    [validate-curated] quality check layer=curated check=expected_city_count category=business rule passed=True detail=41 cities (contract expects 41)
+INFO    [validate-curated] quality check layer=curated check=no_forbidden_features category=predictive integrity passed=True detail=forbidden columns in feature list: none
+INFO    [validate-curated] quality check layer=curated check=built_from_contract_source category=freshness/applicability passed=True detail=every row came from the source file named in the contract
+INFO    [validate-curated] quality check layer=curated check=postgres_rows_match_curated_file category=consistency passed=True detail=postgres 10433 vs curated file 10433
+INFO    [validate-curated] quality check layer=curated check=postgres_keys_unique category=uniqueness passed=True detail=0 duplicate keys in postgres
+INFO    [validate-curated] step finished duration_s=0.15
+INFO    [train] step started
+INFO    [train] models trained split_date=2020-01-12 train_rows=8373 test_rows=2060 n_features=86
+INFO    [train] step finished duration_s=12.51
+INFO    [evaluate] step started
+INFO    [evaluate] metrics written accuracy=0.7184 macro_f1=0.4972 rf_mae=5.8981 naive_mae=3.8307
+INFO    [evaluate] step finished duration_s=0.04
+INFO    [reproducibility-check] step started
+INFO    [reproducibility-check] reproducibility check metric=severity_macro_f1 expected=0.494 actual=0.4972 difference=0.0032 tolerance=0.01 data_ok=True passed=True
+INFO    [reproducibility-check] step finished duration_s=0.01
+INFO    [publish-outputs] step started
+INFO    [publish-outputs] run summary published status=success file=outputs/run_summary.json table=pipeline_run_summary raw_rows=32701 quarantined_rows=1 staging_rows=32701 curated_rows=10433 train_rows=8373 test_rows=2060 prediction_rows=2060
+INFO    [publish-outputs] step finished duration_s=0.04
 exit code (second run): 0
+On branch main
+Your branch is up to date with 'origin/main'.
 
-**********************
-Windows PowerShell transcript end
-End time: 20261012211711
-**********************
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   metadata/split_manifest.json
+        modified:   outputs/metrics.json
+        modified:   outputs/metrics_comparison.json
+        modified:   outputs/predictions.csv
+        modified:   outputs/quality/curated_build_checks.json
+        modified:   outputs/quality/curated_checks.json
+        modified:   outputs/quality/raw_checks.json
+        modified:   outputs/run_summary.json
+
+no changes added to commit (use "git add" and/or "git commit -a")
+Transcript stopped, output file is C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH\docs\evidence\clean_clone_test.txt

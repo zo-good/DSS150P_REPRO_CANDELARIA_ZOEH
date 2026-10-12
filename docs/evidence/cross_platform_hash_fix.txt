@@ -1,26 +1,118 @@
-﻿**********************
-Windows PowerShell transcript start
-Start time: 20261012195510
-Username: LUMILIPAD\zoehc
-RunAs User: LUMILIPAD\zoehc
-Configuration Name: 
-Machine: LUMILIPAD (Microsoft Windows NT 10.0.26200.0)
-Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\zoehc\AppData\Local\Programs\Microsoft VS Code\2a59476c9b\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
-Process ID: 3716
-PSVersion: 5.1.26100.9444
-PSEdition: Desktop
-PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9444
-BuildVersion: 10.0.26100.9444
-CLRVersion: 4.0.30319.42000
-WSManStackVersion: 3.0
-PSRemotingProtocolVersion: 2.3
-SerializationVersion: 1.1.0.1
-**********************
+Cross-platform row-hash fix evidence (DSS150P Lab 4), 2026-10-12 (Asia/Manila)
+After rounding floats before hashing: one Windows load (recomputes all row hashes once), then a Docker (Linux) run-all.
+Expected: Docker load inserted=0 updated=0 unchanged=10433 -> Windows and Linux now agree.
+Note: Windows PowerShell 5.1 transcripts did not capture output from native programs (python, docker), so this file is the terminal output copied in full.
+
+(.venv) PS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> Start-Transcript -Path docs/evidence/cross_platform_hash_fix.txt
+>> python -m src.cli load-postgres
+>> docker compose build pipeline
+>> docker compose run --rm pipeline
+>> Stop-Transcript
 Transcript started, output file is docs/evidence/cross_platform_hash_fix.txt
+INFO    [load-postgres] step started
+INFO    [load-postgres] postgres load committed table=curated_dengue_weekly rows_in_file=10433 inserted=0 updated=10433 unchanged=0 rows_in_table=10433
+INFO    [load-postgres] step finished duration_s=6.41
+#1 [internal] load local bake definitions
+#1 reading from stdin 604B 0.0s done
+#1 DONE 0.0s
 
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 570B done
+#2 DONE 0.0s
 
+#3 [internal] load metadata for docker.io/library/python:3.12-slim
+#3 DONE 1.3s
 
-**********************
-Windows PowerShell transcript end
-End time: 20261012195556
-**********************
+#4 [internal] load .dockerignore
+#4 transferring context: 128B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 20.05kB 0.0s done
+#5 DONE 0.0s
+
+#6 [1/8] FROM docker.io/library/python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1
+#6 resolve docker.io/library/python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1 0.0s done
+#6 DONE 0.0s
+
+#7 [3/8] COPY requirements.txt .
+#7 CACHED
+
+#8 [2/8] WORKDIR /app
+#8 CACHED
+
+#9 [4/8] RUN pip install --no-cache-dir -r requirements.txt
+#9 CACHED
+
+#10 [5/8] COPY src/ src/
+#10 DONE 0.0s
+
+#11 [6/8] COPY config/ config/
+#11 DONE 0.0s
+
+#12 [7/8] COPY sql/ sql/
+#12 DONE 0.0s
+
+#13 [8/8] COPY metadata/ metadata/
+#13 DONE 0.1s
+
+#14 exporting to image
+#14 exporting layers
+#14 exporting layers 0.2s done
+#14 exporting manifest sha256:a0d1e83b47e7ff4474e642f9630e38938e7413d5c99e7bffa01a0c436961ca48 0.0s done
+#14 exporting config sha256:cc89ada3745ccfba7d3ff6039f49b0d986376492bc868adcca34719a94695fa2 0.0s done
+#14 exporting attestation manifest sha256:13521c5a54287e3650788e729852e20993df7d7628e0289359127cededfaaa3e 0.0s done
+#14 exporting manifest list sha256:cf61945c2ac602db6815848d45efa50221fb58f82499c597ddb1f3ee925c8301 0.0s done
+#14 naming to docker.io/library/dss150p-lab4-pipeline:latest done
+#14 unpacking to docker.io/library/dss150p-lab4-pipeline:latest 0.1s done
+#14 DONE 0.4s
+
+#15 resolving provenance for metadata file
+#15 DONE 0.0s
+[+] build 1/1
+ ✔ Image dss150p-lab4-pipeline Built                                                                                                            2.6s
+[+]  1/1t 1/11
+ ✔ Container dss150p-lab4-postgres Running                                                                                                      0.0s
+Container dss150p-lab4-postgres Waiting 
+Container dss150p-lab4-postgres Healthy 
+Container dss150p_repro_candelaria_zoeh-pipeline-run-d1d5556a7057 Creating 
+Container dss150p_repro_candelaria_zoeh-pipeline-run-d1d5556a7057 Created 
+INFO    [ingest] step started
+INFO    [ingest] source verified file=doh-epi-dengue-data-2016-2021.csv sha256=e1968c4009ad rows=32702
+INFO    [ingest] source verified file=daily_data_combined_2010_to_2019.csv sha256=26665bd48292 rows=500324
+INFO    [ingest] source verified file=daily_data_combined_2020_to_2023.csv sha256=73401480f88b rows=206001
+INFO    [ingest] weather raw copy up to date, skipped file=daily_data_combined_2010_to_2019.csv
+INFO    [ingest] weather raw copy up to date, skipped file=daily_data_combined_2020_to_2023.csv
+INFO    [ingest] checkpoint loaded watermark=2021-01-10 committed=6
+WARNING [ingest] rows quarantined at ingestion rows=1 file=data/quarantine/ingest_unparseable_date.csv
+INFO    [ingest] batch already committed, skipped batch=dengue_2016
+INFO    [ingest] batch already committed, skipped batch=dengue_2017
+INFO    [ingest] batch already committed, skipped batch=dengue_2018
+INFO    [ingest] batch already committed, skipped batch=dengue_2019
+INFO    [ingest] batch already committed, skipped batch=dengue_2020
+INFO    [ingest] batch already committed, skipped batch=dengue_2021
+INFO    [ingest] incremental ingestion finished batches_added=0 total_raw_rows=32701 watermark=2021-01-10
+INFO    [ingest] step finished duration_s=4.77
+INFO    [transform-staging] step started
+WARNING [transform-staging] null deaths kept as null in staging rows=1
+INFO    [transform-staging] staging written table=dengue_weekly rows_in=32701 rows_out=32701
+WARNING [transform-staging] duplicate city-days found rows=11688 policy=keep_all cities=['Lipa City', 'Lucena', 'Maasin', 'Mabalacat City']
+INFO    [transform-staging] staging written table=weather_daily rows_in=706325 rows_out=706325
+INFO    [transform-staging] step finished duration_s=3.69
+INFO    [build-curated] step started
+WARNING [build-curated] mapped city dropped: its name only matches after trimming spaces cities=['CAGAYAN DE ORO CITY'] setting=transform.strip_location_whitespace
+INFO    [build-curated] curated written table=dengue_weather_weekly rows=10433 cities=41 first_date=2016-02-07 last_date=2021-01-10
+INFO    [build-curated] step finished duration_s=1.64
+INFO    [load-postgres] step started
+INFO    [load-postgres] postgres load committed table=curated_dengue_weekly rows_in_file=10433 inserted=0 updated=0 unchanged=10433 rows_in_table=10433
+INFO    [load-postgres] step finished duration_s=5.62
+INFO    [train] step started
+INFO    [train] models trained split_date=2020-01-12 train_rows=8373 test_rows=2060 n_features=86
+INFO    [train] step finished duration_s=14.17
+INFO    [evaluate] step started
+INFO    [evaluate] metrics written accuracy=0.7184 macro_f1=0.4972 rf_mae=5.8981 naive_mae=3.8307
+INFO    [evaluate] step finished duration_s=0.04
+INFO    [reproducibility-check] step started
+INFO    [reproducibility-check] reproducibility check metric=severity_macro_f1 expected=0.494 actual=0.4972 difference=0.0032 tolerance=0.01 data_ok=True passed=True
+INFO    [reproducibility-check] step finished duration_s=0.01
+Transcript stopped, output file is C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH\docs\evidence\cross_platform_hash_fix.txt

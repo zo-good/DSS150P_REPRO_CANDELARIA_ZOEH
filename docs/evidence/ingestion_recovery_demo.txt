@@ -1,43 +1,73 @@
-﻿**********************
-Windows PowerShell transcript start
-Start time: 20261011235643
-Username: LUMILIPAD\zoehc
-RunAs User: LUMILIPAD\zoehc
-Configuration Name: 
-Machine: LUMILIPAD (Microsoft Windows NT 10.0.26200.0)
-Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\zoehc\AppData\Local\Programs\Microsoft VS Code\2a59476c9b\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
-Process ID: 7028
-PSVersion: 5.1.26100.9444
-PSEdition: Desktop
-PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9444
-BuildVersion: 10.0.26100.9444
-CLRVersion: 4.0.30319.42000
-WSManStackVersion: 3.0
-PSRemotingProtocolVersion: 2.3
-SerializationVersion: 1.1.0.1
-**********************
+Ingestion recovery demo (DSS150P Lab 4), 2026-10-11 (Asia/Manila)
+Run 1 interrupted on purpose after 2 batches (--stop-after 2), run 2 resumes, run 3 adds nothing, then a duplicate check.
+Note: Windows PowerShell 5.1 transcripts did not capture output from native programs (python, docker), so this file is the terminal output copied in full.
+
+(.venv) PS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> New-Item -ItemType Directory -Force docs/evidence | Out-Null
+>> Start-Transcript -Path docs/evidence/ingestion_recovery_demo.txt
 Transcript started, output file is docs/evidence/ingestion_recovery_demo.txt
-]633;D;0]633;A]633;P;Cwd=C:\x5cUsers\x5czoehc\x5cDocuments\x5cDSS150P_REPRO_CANDELARIA_ZOEHPS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> ]633;B
-(.venv) python -m src.cli ingest --mode incremental --stop-after 2
-echo "exit code: $LASTEXITCODE"
-
+(.venv) PS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> python -m src.cli ingest --mode incremental --stop-after 2
+>> echo "exit code: $LASTEXITCODE"
+INFO    [ingest] step started command=ingest
+INFO    [ingest] source verified file=doh-epi-dengue-data-2016-2021.csv sha256=e1968c4009ad rows=32702
+INFO    [ingest] source verified file=daily_data_combined_2010_to_2019.csv sha256=26665bd48292 rows=500324
+INFO    [ingest] source verified file=daily_data_combined_2020_to_2023.csv sha256=73401480f88b rows=206001
+INFO    [ingest] weather raw copy written file=daily_data_combined_2010_to_2019.csv rows=500324
+INFO    [ingest] weather raw copy written file=daily_data_combined_2020_to_2023.csv rows=206001
+INFO    [ingest] checkpoint loaded watermark=None committed=0
+WARNING [ingest] rows quarantined at ingestion rows=1 file=data/quarantine/ingest_unparseable_date.csv
+INFO    [ingest] batch committed batch=dengue_2016 rows=6329 watermark=2016-12-25
+INFO    [ingest] batch committed batch=dengue_2017 rows=6636 watermark=2017-12-31
+ERROR   [ingest] step failed error_type=SimulatedInterruption error=stopped on purpose after 2 batch(es) (--stop-after)
 exit code: 1
-]633;D;0]633;A]633;P;Cwd=C:\x5cUsers\x5czoehc\x5cDocuments\x5cDSS150P_REPRO_CANDELARIA_ZOEHPS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> ]633;B
-(.venv) python -m src.cli ingest --mode incremental
-echo "exit code: $LASTEXITCODE"
-
+(.venv) PS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> python -m src.cli ingest --mode incremental
+>> echo "exit code: $LASTEXITCODE"
+INFO    [ingest] step started command=ingest
+INFO    [ingest] source verified file=doh-epi-dengue-data-2016-2021.csv sha256=e1968c4009ad rows=32702
+INFO    [ingest] source verified file=daily_data_combined_2010_to_2019.csv sha256=26665bd48292 rows=500324
+INFO    [ingest] source verified file=daily_data_combined_2020_to_2023.csv sha256=73401480f88b rows=206001
+INFO    [ingest] weather raw copy up to date, skipped file=daily_data_combined_2010_to_2019.csv
+INFO    [ingest] weather raw copy up to date, skipped file=daily_data_combined_2020_to_2023.csv
+INFO    [ingest] checkpoint loaded watermark=2017-12-31 committed=2
+WARNING [ingest] rows quarantined at ingestion rows=1 file=data/quarantine/ingest_unparseable_date.csv
+INFO    [ingest] batch already committed, skipped batch=dengue_2016
+INFO    [ingest] batch already committed, skipped batch=dengue_2017
+INFO    [ingest] batch committed batch=dengue_2018 rows=6552 watermark=2018-12-30
+INFO    [ingest] batch committed batch=dengue_2019 rows=6426 watermark=2019-12-29
+INFO    [ingest] batch committed batch=dengue_2020 rows=6506 watermark=2020-12-27
+INFO    [ingest] batch committed batch=dengue_2021 rows=252 watermark=2021-01-10
+INFO    [ingest] incremental ingestion finished batches_added=4 total_raw_rows=32701 watermark=2021-01-10
+INFO    [ingest] step finished
 exit code: 0
-]633;D;0]633;A]633;P;Cwd=C:\x5cUsers\x5czoehc\x5cDocuments\x5cDSS150P_REPRO_CANDELARIA_ZOEHPS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> ]633;B
-(.venv) python -m src.cli ingest --mode incremental
-echo "exit code: $LASTEXITCODE"
-
+(.venv) PS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> python -m src.cli ingest --mode incremental
+>> echo "exit code: $LASTEXITCODE"
+INFO    [ingest] step started command=ingest
+INFO    [ingest] source verified file=doh-epi-dengue-data-2016-2021.csv sha256=e1968c4009ad rows=32702
+INFO    [ingest] source verified file=daily_data_combined_2010_to_2019.csv sha256=26665bd48292 rows=500324
+INFO    [ingest] source verified file=daily_data_combined_2020_to_2023.csv sha256=73401480f88b rows=206001
+INFO    [ingest] weather raw copy up to date, skipped file=daily_data_combined_2010_to_2019.csv
+INFO    [ingest] weather raw copy up to date, skipped file=daily_data_combined_2020_to_2023.csv
+INFO    [ingest] checkpoint loaded watermark=2021-01-10 committed=6
+WARNING [ingest] rows quarantined at ingestion rows=1 file=data/quarantine/ingest_unparseable_date.csv
+INFO    [ingest] batch already committed, skipped batch=dengue_2016
+INFO    [ingest] batch already committed, skipped batch=dengue_2017
+INFO    [ingest] batch already committed, skipped batch=dengue_2018
+INFO    [ingest] batch already committed, skipped batch=dengue_2019
+INFO    [ingest] batch already committed, skipped batch=dengue_2020
+INFO    [ingest] batch already committed, skipped batch=dengue_2021
+INFO    [ingest] incremental ingestion finished batches_added=0 total_raw_rows=32701 watermark=2021-01-10
+INFO    [ingest] step finished
 exit code: 0
-]633;D;0]633;A]633;P;Cwd=C:\x5cUsers\x5czoehc\x5cDocuments\x5cDSS150P_REPRO_CANDELARIA_ZOEHPS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> ]633;B
-(.venv) python -c "import pandas as pd, glob; d = pd.concat([pd.read_csv(f, dtype=str) for f in sorted(glob.glob('data/raw/dengue_batches/*.csv'))]); print('raw rows:', len(d)); print('duplicate keys:', d.source_row_key.duplicated().sum()); print('duplicate hashes:', d.record_hash.duplicated().sum()); print(d.groupby('batch_id').size())"
-
-]633;D;0]633;A]633;P;Cwd=C:\x5cUsers\x5czoehc\x5cDocuments\x5cDSS150P_REPRO_CANDELARIA_ZOEHPS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> ]633;B
-(.venv) Stop-Transcript
-**********************
-Windows PowerShell transcript end
-End time: 20261011235726
-**********************
+(.venv) PS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> python -c "import pandas as pd, glob; d = pd.concat([pd.read_csv(f, dtype=str) for f in sorted(glob.glob('data/raw/dengue_batches/*.csv'))]); print('raw rows:', len(d)); print('duplicate keys:', d.source_row_key.duplicated().sum()); print('duplicate hashes:', d.record_hash.duplicated().sum()); print(d.groupby('batch_id').size())"
+raw rows: 32701
+duplicate keys: 0
+duplicate hashes: 0
+batch_id
+dengue_2016    6329
+dengue_2017    6636
+dengue_2018    6552
+dengue_2019    6426
+dengue_2020    6506
+dengue_2021     252
+dtype: int64
+(.venv) PS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> Stop-Transcript
+Transcript stopped, output file is C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH\docs\evidence\ingestion_recovery_demo.txt

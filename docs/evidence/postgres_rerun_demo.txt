@@ -1,27 +1,32 @@
-﻿**********************
-Windows PowerShell transcript start
-Start time: 20261012194925
-Username: LUMILIPAD\zoehc
-RunAs User: LUMILIPAD\zoehc
-Configuration Name: 
-Machine: LUMILIPAD (Microsoft Windows NT 10.0.26200.0)
-Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\zoehc\AppData\Local\Programs\Microsoft VS Code\2a59476c9b\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
-Process ID: 3716
-PSVersion: 5.1.26100.9444
-PSEdition: Desktop
-PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9444
-BuildVersion: 10.0.26100.9444
-CLRVersion: 4.0.30319.42000
-WSManStackVersion: 3.0
-PSRemotingProtocolVersion: 2.3
-SerializationVersion: 1.1.0.1
-**********************
-Transcript started, output file is docs/evidence/postgres_rerun_demo.txt
+PostgreSQL rerun-safety demo (DSS150P Lab 4), 2026-10-12 (Asia/Manila)
+Two identical loads of the curated table, then the row/key count and the load_audit table.
+Note: Windows PowerShell 5.1 transcripts did not capture output from native programs (python, docker), so this file is the terminal output copied in full.
 
+(.venv) PS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> docker compose up -d postgres
+>> docker compose ps
+[+] up 3/3
+ ✔ Network dss150p_repro_candelaria_zoeh_default Created
+ ✔ Volume dss150p_repro_candelaria_zoeh_pgdata   Created
+ ✔ Container dss150p-lab4-postgres               Started
+NAME                    IMAGE         COMMAND                  SERVICE    CREATED                  STATUS                                     PORTS
+dss150p-lab4-postgres   postgres:16   "docker-entrypoint.s…"   postgres   Less than a second ago   Up Less than a second (health: starting)   0.0.0.0:5433->5432/tcp, [::]:5433->5432/tcp
+(.venv) PS C:\Users\zoehc\Documents\DSS150P_REPRO_CANDELARIA_ZOEH> python -m src.cli load-postgres
+>> python -m src.cli load-postgres
+>> docker exec dss150p-lab4-postgres psql -U dss150p -d dengue -c "SELECT count(*) AS rows, count(DISTINCT (loc, date)) AS distinct_keys FROM curated_dengue_weekly;"
+>> docker exec dss150p-lab4-postgres psql -U dss150p -d dengue -c "SELECT pipeline_run_id, rows_in_file, rows_inserted, rows_updated, rows_unchanged, rows_in_table FROM load_audit ORDER BY load_id;"
+INFO    [load-postgres] step started
+INFO    [load-postgres] postgres load committed table=curated_dengue_weekly rows_in_file=10433 inserted=10433 updated=0 unchanged=0 rows_in_table=10433
+INFO    [load-postgres] step finished duration_s=6.38
+INFO    [load-postgres] step started
+INFO    [load-postgres] postgres load committed table=curated_dengue_weekly rows_in_file=10433 inserted=0 updated=0 unchanged=10433 rows_in_table=10433
+INFO    [load-postgres] step finished duration_s=5.78
+ rows  | distinct_keys
+-------+---------------
+ 10433 |         10433
+(1 row)
 
-
-
-**********************
-Windows PowerShell transcript end
-End time: 20261012194943
-**********************
+       pipeline_run_id       | rows_in_file | rows_inserted | rows_updated | rows_unchanged | rows_in_table
+-----------------------------+--------------+---------------+--------------+----------------+---------------
+ run_20261012T114928Z_ac1f34 |        10433 |         10433 |            0 |              0 |         10433
+ run_20261012T114936Z_747b69 |        10433 |             0 |            0 |          10433 |         10433
+(2 rows)
