@@ -16,7 +16,7 @@ import argparse
 import sys
 import time
 
-from src import evaluate, ingest, storage, train, transform
+from src import benchmark, evaluate, ingest, storage, train, transform
 from src.common import RunLogger, new_run_id
 
 # the order run-all executes (Airflow uses the same steps as separate tasks)
@@ -42,6 +42,7 @@ def build_parser():
     sub.add_parser("transform-staging", help="raw -> staging (clean, type, quarantine)")
     sub.add_parser("build-curated", help="staging -> curated (weekly join + features)")
     sub.add_parser("load-postgres", help="curated -> PostgreSQL (rerun-safe upsert)")
+    sub.add_parser("benchmark", help="CSV/JSONL/Parquet/PostgreSQL + partition benchmark")
     sub.add_parser("train", help="curated -> split, labels, random forests, predictions")
     sub.add_parser("evaluate", help="predictions -> outputs/metrics.json")
     sub.add_parser("reproducibility-check", help="compare metrics with expected baseline")
@@ -63,6 +64,8 @@ def run_step(step, run_id, logger, args):
         transform.run_curated(run_id, logger)
     elif step == "load-postgres":
         storage.load_curated(run_id, logger)
+    elif step == "benchmark":
+        benchmark.run_benchmark(run_id, logger)
     elif step == "train":
         train.run_training(run_id, logger)
     elif step == "evaluate":

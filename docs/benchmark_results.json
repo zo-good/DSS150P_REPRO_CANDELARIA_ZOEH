@@ -1,0 +1,79 @@
+{
+  "pipeline_run_id": "run_20261012T120334Z_937e53",
+  "created_at_utc": "2026-10-12T12:03:44+00:00",
+  "records": 10433,
+  "read_repeats": 5,
+  "timing_note": "read_cold_s = first read; read_warm_median_s = median of the next 5 reads (cold run NOT included in the median)",
+  "formats": [
+    {
+      "format": "csv",
+      "size_bytes": 7378780,
+      "write_s": 0.48011909995693713,
+      "read_cold_s": 0.1110682999715209,
+      "read_warm_median_s": 0.10204110003542155,
+      "rows_read": 10433,
+      "same_logical_records": true
+    },
+    {
+      "format": "jsonl",
+      "size_bytes": 20525214,
+      "write_s": 0.22203199996147305,
+      "read_cold_s": 0.4089594000251964,
+      "read_warm_median_s": 0.3869487000629306,
+      "rows_read": 10433,
+      "same_logical_records": true
+    },
+    {
+      "format": "parquet",
+      "size_bytes": 1908273,
+      "write_s": 0.05943939997814596,
+      "read_cold_s": 0.018121300032362342,
+      "read_warm_median_s": 0.009660499985329807,
+      "rows_read": 10433,
+      "same_logical_records": true
+    },
+    {
+      "format": "postgresql",
+      "size_bytes": 7503872,
+      "write_s": 0.5670654999557883,
+      "read_cold_s": 0.25428939994890243,
+      "read_warm_median_s": 0.2854267000220716,
+      "rows_read": 10433,
+      "same_logical_records": true
+    }
+  ],
+  "postgresql_filter_query": {
+    "query": "SELECT * FROM bench_curated_dengue_weekly WHERE loc = %s AND date BETWEEN %s AND %s",
+    "params": [
+      "QUEZON CITY",
+      "2019-01-01",
+      "2019-12-31"
+    ],
+    "rows": 51,
+    "read_cold_s": 0.003971500089392066,
+    "read_warm_median_s": 0.002890000003390014
+  },
+  "file_filter_warm_median_s": {
+    "csv": 0.11404949997086078,
+    "jsonl": 0.3808152999263257,
+    "parquet": 0.01706199999898672
+  },
+  "partition_demo": {
+    "partition_column": "year (from date)",
+    "partitions": [
+      "year=2016",
+      "year=2017",
+      "year=2018",
+      "year=2019",
+      "year=2020",
+      "year=2021"
+    ],
+    "selected": "year=2019",
+    "rows_read": 2091,
+    "rows_expected": 2091,
+    "row_count_ok": true,
+    "read_cold_s": 0.015633399947546422,
+    "read_warm_median_s": 0.006712600006721914,
+    "full_parquet_then_filter_warm_median_s": 0.009302700054831803
+  }
+}
