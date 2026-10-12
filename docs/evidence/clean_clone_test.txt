@@ -1,0 +1,45 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261012211044
+Username: LUMILIPAD\zoehc
+RunAs User: LUMILIPAD\zoehc
+Configuration Name: 
+Machine: LUMILIPAD (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\zoehc\AppData\Local\Programs\Microsoft VS Code\2a59476c9b\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
+Process ID: 3716
+PSVersion: 5.1.26100.9444
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9444
+BuildVersion: 10.0.26100.9444
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is ..\DSS150P_REPRO_CANDELARIA_ZOEH\docs\evidence\clean_clone_test.txt
+c064b70 docs: add analysis and reflection answers
+d561a4d docs: add reproducibility report with gap table, deviations and acceptance evidence
+78b6d5c docs: add runbook (execution, failures, restart, checkpoint recovery, DB reset, cleanup)
+355d552 docs: write full README from a clean-machine perspective
+56de758 docs: add architecture and dataset-level lineage diagrams
+]633;D;0]633;A]633;P;Cwd=C:\x5cUsers\x5czoehc\x5cDocuments\x5cclean_clone_testPS C:\Users\zoehc\Documents\clean_clone_test> ]633;B
+(.venv) Copy-Item .env.example .env
+docker compose up -d postgres
+docker compose build pipeline
+docker compose run --rm pipeline
+echo "exit code (first run): $LASTEXITCODE"
+docker compose run --rm pipeline
+echo "exit code (second run): $LASTEXITCODE"
+git status
+Stop-Transcript
+
+
+
+exit code (first run): 0
+
+exit code (second run): 0
+
+**********************
+Windows PowerShell transcript end
+End time: 20261012211711
+**********************

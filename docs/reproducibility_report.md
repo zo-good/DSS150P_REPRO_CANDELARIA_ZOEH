@@ -142,7 +142,7 @@ window, and the separate NCR notebook (13). These are side analyses, not the rep
 
 | ID | Test | Evidence |
 |---|---|---|
-| A1 | Clones and README setup is sufficient | `README.md` (clean-machine steps) |
+| A1 | Clones and README setup is sufficient | `docs/evidence/clean_clone_test.txt` (fresh clone, empty DB: 2 runs, 0.4972, no duplicates) |
 | A2 | Source identity verified | `python -m src.cli verify-source`; `metadata/source_manifest.yml` |
 | A3 | No machine-specific absolute paths | `src/config.py`; all paths relative to the project root |
 | A4 | No secrets committed | `.gitignore` (`.env`), `.env.example` only |
